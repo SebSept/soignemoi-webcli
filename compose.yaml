@@ -1,0 +1,55 @@
+name: composer-starter
+services:
+  nginx:
+    depends_on:
+      php:
+        condition: service_started
+    expose:
+      - "32772"
+    image: nginx:1.21.3
+    networks:
+      nginx: null
+    ports:
+      - target: 80
+        published: "32772"
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: /home/http/perso/composer-starter/docker/nginx_default.conf
+        target: /etc/nginx/conf.d/default.conf
+      - type: bind
+        source: /home/http/perso/composer-starter/public
+        target: /app/public
+  php:
+    depends_on:
+      postgres:
+        condition: service_started
+    image: ghcr.io/sebsept/docker-php-symfony-starter:main
+    networks:
+      nginx: null
+      postgres: null
+    restart: unless-stopped
+    user: 0:1000
+    volumes:
+      - type: bind
+        source: /home/http/perso/composer-starter
+        target: /app
+  postgres:
+    environment:
+      POSTGRES_DB: my_symfony
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    expose:
+      - "5432"
+    image: postgres:16.1
+    networks:
+      postgres: null
+    ports:
+      - target: 5432
+        published: "32770"
+    restart: unless-stopped
+networks:
+  nginx:
+    name: composer-starter_nginx
+  postgres:
+    name: composer-starter_postgres

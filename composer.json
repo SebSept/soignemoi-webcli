@@ -1,0 +1,119 @@
+{
+  "name": "sebsept/php-starter",
+  "type": "project",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.2",
+    "ext-ctype": "*",
+    "ext-iconv": "*",
+    "api-platform/core": "^3.2",
+    "doctrine/doctrine-bundle": "^2.12",
+    "doctrine/doctrine-migrations-bundle": "^3.3",
+    "doctrine/orm": "^3.1",
+    "nelmio/cors-bundle": "^2.4",
+    "phpdocumentor/reflection-docblock": "^5.3",
+    "phpstan/phpdoc-parser": "^1.27",
+    "symfony/asset": "~7.0.0",
+    "symfony/asset-mapper": "~7.0.0",
+    "symfony/console": "~7.0.0",
+    "symfony/dotenv": "~7.0.0",
+    "symfony/expression-language": "~7.0.0",
+    "symfony/flex": "^1.17 || ^2",
+    "symfony/framework-bundle": "~7.0.0",
+    "symfony/property-access": "~7.0.0",
+    "symfony/property-info": "~7.0.0",
+    "symfony/runtime": "~7.0.0",
+    "symfony/security-bundle": "~7.0.0",
+    "symfony/serializer": "~7.0.0",
+    "symfony/twig-bundle": "~7.0.0",
+    "symfony/validator": "~7.0.0",
+    "symfony/yaml": "~7.0.0",
+    "twig/extra-bundle": "^2.12 || ^3.0",
+    "twig/twig": "^2.12 || ^3.0"
+  },
+  "require-dev": {
+    "brianium/paratest": "^6.11",
+    "dama/doctrine-test-bundle": "^8.0",
+    "doctrine/doctrine-fixtures-bundle": "^3.5",
+    "ergebnis/composer-normalize": "^2.42",
+    "fakerphp/faker": "^1.23",
+    "phpstan/phpstan": "^1.10",
+    "phpstan/phpstan-doctrine": "^1.3",
+    "phpunit/phpunit": "^9.5",
+    "rector/rector": "^1.0",
+    "symfony/browser-kit": "~7.0.0",
+    "symfony/css-selector": "~7.0.0",
+    "symfony/debug-bundle": "~7.0.0",
+    "symfony/maker-bundle": "^1.52",
+    "symfony/monolog-bundle": "^3.0",
+    "symfony/phpunit-bridge": "^7.0",
+    "symfony/stopwatch": "~7.0.0",
+    "symfony/web-profiler-bundle": "~7.0.0",
+    "zenstruck/foundry": "^1.37"
+  },
+  "replace": {
+    "symfony/polyfill-ctype": "*",
+    "symfony/polyfill-iconv": "*",
+    "symfony/polyfill-php72": "*"
+  },
+  "conflict": {
+    "symfony/symfony": "*"
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "App\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/package-versions-deprecated": true,
+      "ergebnis/composer-normalize": true,
+      "php-http/discovery": true,
+      "symfony/flex": true,
+      "symfony/runtime": true
+    },
+    "optimize-autoloader": true,
+    "preferred-install": {
+      "*": "dist"
+    },
+    "sort-packages": true
+  },
+  "extra": {
+    "symfony": {
+      "allow-contrib": false,
+      "require": "7.0.*"
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "@auto-scripts"
+    ],
+    "post-update-cmd": [
+      "@auto-scripts"
+    ],
+    "auto-scripts": {
+      "cache:clear": "symfony-cmd",
+      "assets:install %PUBLIC_DIR%": "symfony-cmd",
+      "importmap:install": "symfony-cmd"
+    },
+    "cs-fixer": "php-cs-fixer fix",
+    "phpstan": "phpstan",
+    "pre-commit": [
+      "symfony composer validate",
+      "@rector",
+      "@cs-fixer",
+      "symfony composer normalize",
+      "@phpstan",
+      "@tests"
+    ],
+    "rector": "php vendor/bin/rector",
+    "tests": "php vendor/bin/paratest --runner WrapperRunner"
+  }
+}
