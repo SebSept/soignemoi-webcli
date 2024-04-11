@@ -1,69 +1,4 @@
 {
-    "api-platform/core": {
-        "version": "3.2",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "3.2",
-            "ref": "696d44adc3c0d4f5d25a2f1c4f3700dd8a5c6db9"
-        },
-        "files": [
-            "config/packages/api_platform.yaml",
-            "config/routes/api_platform.yaml",
-            "src/ApiResource/.gitignore"
-        ]
-    },
-    "dama/doctrine-test-bundle": {
-        "version": "8.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "main",
-            "version": "7.2",
-            "ref": "896306d79d4ee143af9eadf9b09fd34a8c391b70"
-        },
-        "files": [
-            "config/packages/dama_doctrine_test_bundle.yaml"
-        ]
-    },
-    "doctrine/doctrine-bundle": {
-        "version": "2.11",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "2.10",
-            "ref": "310a02a22033e35640468f48ff6bf31a25891537"
-        },
-        "files": [
-            "config/packages/doctrine.yaml",
-            "src/Entity/.gitignore",
-            "src/Repository/.gitignore"
-        ]
-    },
-    "doctrine/doctrine-fixtures-bundle": {
-        "version": "3.5",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "3.0",
-            "ref": "1f5514cfa15b947298df4d771e694e578d4c204d"
-        },
-        "files": [
-            "src/DataFixtures/AppFixtures.php"
-        ]
-    },
-    "doctrine/doctrine-migrations-bundle": {
-        "version": "3.3",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "3.1",
-            "ref": "1d01ec03c6ecbd67c3375c5478c9a423ae5d6a33"
-        },
-        "files": [
-            "config/packages/doctrine_migrations.yaml",
-            "migrations/.gitignore"
-        ]
-    },
     "nelmio/cors-bundle": {
         "version": "2.4",
         "recipe": {
@@ -274,17 +209,5 @@
     },
     "twig/extra-bundle": {
         "version": "v3.8.0"
-    },
-    "zenstruck/foundry": {
-        "version": "1.37",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "1.10",
-            "ref": "37c2f894cc098ab4c08874b80cccc8e2f8de7976"
-        },
-        "files": [
-            "config/packages/zenstruck_foundry.yaml"
-        ]
     }
 }

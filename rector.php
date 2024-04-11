@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+/*
+ * SoigneMoi API - Projet ECF
+ *
+ * @author Sébastien Monterisi <sebastienmonterisi@gmail.com>
+ * 2024
+ */
+
 use Rector\Config\RectorConfig;
 use Rector\Doctrine\Set\DoctrineSetList;
 use Rector\PHPUnit\Set\PHPUnitSetList;
@@ -39,5 +46,5 @@ return RectorConfig::configure()
         strictBooleans: true
     )
     ->withParallel()
-    ->withPHPStanConfigs([__DIR__.'/phpstan.dist.neon']) // @todo fait quoi exactement ?
+    ->withPHPStanConfigs([__DIR__.'/phpstan.neon']) // @todo fait quoi exactement ?
 ;

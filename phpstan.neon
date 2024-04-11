@@ -1,4 +1,9 @@
 parameters:
-	level: 8
-	paths:
-		- src
+    level: 9
+    paths:
+        - src
+    excludePaths:
+        - src/Factory/*
+        - src/DataFixtures/*
+includes:
+#    - phpstan-baseline.neon

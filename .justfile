@@ -62,8 +62,9 @@ db-fixtures-make entity:
 db-fixtures-load:
     {{console}} doctrine:fixture:load --no-interaction
 
-console command:
-    {{console}} {{command}}
+# Lancement scripts d'outil de qualité via composer
+composer script:
+    {{composer}} {{script}}
 
 # composer require
 req package:
@@ -95,3 +96,7 @@ sql query env='dev':
 # interactive php shell
 psysh:
     {{docker_php_exec}} psysh
+
+install-pre-commit-hook:
+    echo "docker compose exec php symfony composer run-script pre-commit" > .git/hooks/pre-commit
+    {{docker_php_exec}} chmod +x .git/hooks/pre-commit
