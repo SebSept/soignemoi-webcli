@@ -1,9 +1,10 @@
+set dotenv-load
 docker_php_exec := "docker compose exec -it -u climber php"
 symfony := docker_php_exec + " symfony "
 composer := symfony + " composer "
 console := symfony + "console "
 docker_exec_nginx := "docker compose exec -it -u root nginx"
-
+browser := "firefox"
 up:
     docker-compose up -d
 
@@ -13,6 +14,10 @@ update: && tests
     docker-compose down
     docker-compose up -d --build
     {{composer}} install
+
+# open web browser
+browser:
+    {{browser}} http://localhost:$NGINX_PORT
 
 # open a fish shell on the container
 fish:
@@ -73,10 +78,10 @@ quality:
     {{composer}} quality
 
 tests format='--testdox':
-    {{docker_php_exec}} php bin/phpunit {{format}}
+    {{docker_php_exec}} php vendor/bin/phpunit {{format}}
 
 test filter:
-    {{docker_php_exec}} php bin/phpunit --filter {{filter}}
+    {{docker_php_exec}} php vendor/bin/phpunit --filter {{filter}}
 
 # création d'un test
 # The test type must be one of "TestCase", "KernelTestCase", "WebTestCase", "ApiTestCase", "PantherTestCase"
