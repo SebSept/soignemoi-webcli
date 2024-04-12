@@ -5,14 +5,15 @@ composer := symfony + " composer "
 console := symfony + "console "
 docker_exec_nginx := "docker compose exec -it -u root nginx"
 browser := "firefox"
+
 up:
-    docker-compose up -d
+    docker compose up -d
 
 # update source files + docker compose down+up
 update: && tests
     git pull
-    docker-compose down
-    docker-compose up -d --build
+    docker compose down
+    docker compose up -d --build
     {{composer}} install
 
 # open web browser
@@ -26,10 +27,6 @@ fish:
 [private]
 fish_root:
     docker compose exec -it -u root php fish
-
-[confirm("Démarrer le serveur symfony (et pas le serveur nginx), êtes-vous sûr ?")]
-serve:
-    {{symfony}} server:start --no-tls --daemon
 
 new-controller:
     {{console}} make:controller
@@ -107,3 +104,21 @@ pre-commit:
 install-pre-commit-hook:
     echo "docker compose exec php symfony composer run-script pre-commit" > .git/hooks/pre-commit
     {{docker_php_exec}} chmod +x .git/hooks/pre-commit
+
+[private]
+[confirm("Écraser .git/hooks/pre-commit ?")]
+install-pre-commit-hook:
+    echo "docker compose exec php symfony composer run-script pre-commit" > .git/hooks/pre-commit
+    {{docker_php_exec}} chmod +x .git/hooks/pre-commit
+
+# firt run docker compose up + composer install + open browser
+#[confirm("review settings in .env before continue")]
+init:
+    @echo press any key to review settings in .env
+    @read
+    xdg-open .env
+    just up
+    {{composer}} install
+    just db-create-test
+    just db-create
+    just browser
