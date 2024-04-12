@@ -23,6 +23,7 @@ services:
     image: ghcr.io/sebsept/docker-php-symfony-starter:main
     networks:
       nginx: null
+      partage: null
     restart: unless-stopped
     user: 0:1000
     volumes:
@@ -32,4 +33,6 @@ services:
 networks:
   nginx:
     name: composer-starter_nginx
+  partage:
+    external: true
 
