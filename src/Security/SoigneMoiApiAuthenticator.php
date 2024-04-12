@@ -69,7 +69,7 @@ class SoigneMoiApiAuthenticator extends AbstractLoginFormAuthenticator
                 function ($password, User $user): bool {
                     $response = $this->api->authenticate($user->getEmail(), $password);
                     $user->setToken($response->token);
-                    //                    $user->eraseCredentials(); // @todo activer
+                    // $user->eraseCredentials(); // @todo activer
 
                     return $response->ok;
                 },
