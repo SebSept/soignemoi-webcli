@@ -43,6 +43,7 @@
     "symfony/phpunit-bridge": "^7.0",
     "symfony/stopwatch": "~7.0.0",
     "symfony/web-profiler-bundle": "~7.0.0",
+    "vincentlanglet/twig-cs-fixer": "^2.6",
     "zenstruck/browser": "^1.8"
   },
   "replace": {
@@ -110,6 +111,6 @@
     ],
     "rector": "php vendor/bin/rector",
     "tests": "php vendor/bin/paratest --runner WrapperRunner",
-    "twig-lint": "php bin/console lint:twig templates"
+    "twig-lint": "twig-cs-fixer lint --fix templates/"
   }
 }
