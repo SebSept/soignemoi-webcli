@@ -42,7 +42,8 @@
     "symfony/monolog-bundle": "^3.0",
     "symfony/phpunit-bridge": "^7.0",
     "symfony/stopwatch": "~7.0.0",
-    "symfony/web-profiler-bundle": "~7.0.0"
+    "symfony/web-profiler-bundle": "~7.0.0",
+    "zenstruck/browser": "^1.8"
   },
   "replace": {
     "symfony/polyfill-ctype": "*",
@@ -102,11 +103,13 @@
       "symfony composer validate",
       "@rector",
       "@cs-fixer",
+      "@twig-lint",
       "symfony composer normalize",
       "@phpstan",
       "@tests"
     ],
     "rector": "php vendor/bin/rector",
-    "tests": "php vendor/bin/paratest --runner WrapperRunner"
+    "tests": "php vendor/bin/paratest --runner WrapperRunner",
+    "twig-lint": "php bin/console lint:twig templates"
   }
 }

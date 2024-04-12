@@ -2,28 +2,30 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
-#    providers:
+    providers:
         # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            id: App\Security\UserProvider
 
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            stateless: true
-#            access_token:
-#                token_handler: App\Security\AccessTokenHandler
-            # obtention d'un token
-#            json_login:
-#                check_path: app_get_token
-#                username_path: email
-#                password_path: password
+            lazy: true
+            provider: app_user_provider
+            custom_authenticator: App\Security\SoigneMoiApiAuthenticator
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                target: app_home
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
+
     access_control:
-        # - { path: ^/api/.* , roles: ROLE_USER }
-        # - { path: ^/profile, roles: ROLE_USER }
+         - { path: ^/home/.* , roles: ROLE_PATIENT }
 
 when@test:
     security:

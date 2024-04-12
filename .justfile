@@ -66,6 +66,10 @@ db-fixtures-load:
 composer script:
     {{composer}} {{script}}
 
+# Run command in Symfony console
+console command:
+    {{console}} {{command}}
+
 # composer require
 req package:
     {{composer}} req {{package}}
@@ -85,8 +89,8 @@ test filter:
     {{docker_php_exec}} php vendor/bin/phpunit --filter {{filter}}
 
 # création d'un test
-# The test type must be one of "TestCase", "KernelTestCase", "WebTestCase", "ApiTestCase", "PantherTestCase"
-make-test name type='ApiTestCase':
+# The test type must be one of "TestCase", "KernelTestCase", "WebTestCase", "PantherTestCase"
+make-test name type='WebTestCase':
     {{console}} make:test {{type}} {{name}}
 
 # exécution d'une requête SQL
@@ -96,6 +100,9 @@ sql query env='dev':
 # interactive php shell
 psysh:
     {{docker_php_exec}} psysh
+
+pre-commit:
+    {{composer}} run-script pre-commit
 
 install-pre-commit-hook:
     echo "docker compose exec php symfony composer run-script pre-commit" > .git/hooks/pre-commit
