@@ -33,6 +33,9 @@
         <testsuite name="e2e">
             <directory>tests/e2e/</directory>
         </testsuite>
+        <testsuite name="service">
+            <directory>tests/Service/</directory>
+        </testsuite>
     </testsuites>
 
     <coverage processUncoveredFiles="true">

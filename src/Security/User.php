@@ -15,14 +15,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class User implements UserInterface
 {
-    private ?string $email = null;
-
     /**
      * @var string[] The user roles
      */
     private array $roles = [];
 
-    public function getEmail(): ?string
+    private string $token;
+
+    public function __construct(private string $email)
+    {
+    }
+
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -41,7 +45,7 @@ class User implements UserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return $this->email;
     }
 
     /**
@@ -73,6 +77,7 @@ class User implements UserInterface
      */
     public function eraseCredentials(): void
     {
+        $this->token = 'noop';
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
@@ -82,7 +87,8 @@ class User implements UserInterface
         return $this->token;
     }
 
-    public function __construct(private readonly string $token)
+    public function setToken(string $token): void
     {
+        $this->token = $token;
     }
 }

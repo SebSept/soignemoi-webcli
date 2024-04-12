@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
+use LogicException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -25,30 +26,21 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
     /**
-     * La création de l'utilisateur et l'authentification se font ici.
+     * Cette méthode n'est jamais appelée
+     * car notre Authenticator créé un Passport
+     * avec un badge qui à un callback qui remplace cette fonction.
      */
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
-        // @todo faire la requete le token sur l'api
-        $user = new User('letoken');
-        $user->setEmail($identifier);
-        $user->setRoles(['ROLE_PATIENT']);
-
-        return $user;
-        // Load a User object from your data source or throw UserNotFoundException.
-        // The $identifier argument may not actually be a username:
-        // it is whatever value is being returned by the getUserIdentifier()
-        // method in your User class.
+        throw new LogicException('This method should never be called.');
     }
 
     /**
      * Refreshes the user after being reloaded from the session.
-     *
      * When a user is logged in, at the beginning of each request, the
      * User object is loaded from the session and then this method is
      * called. Your job is to make sure the user's data is still fresh by,
      * for example, re-querying for fresh User data.
-     *
      * If your firewall is "stateless: true" (for a pure API), this
      * method is not called.
      */

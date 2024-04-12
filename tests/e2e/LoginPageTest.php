@@ -47,14 +47,14 @@ class LoginPageTest extends WebTestCase
             ->assertRedirectedTo('/home');
     }
 
-//    public function testLoginWithInValidCredentials(): void
-//    {
-//        $this->browser()->visit('/login')
-//            ->fillField('inputEmail', self::$invalidCredentials->email)
-//            ->fillField('inputPassword', self::$invalidCredentials->password)
-//            ->clickAndIntercept('submit')
-//            ->assertRedirectedTo('/login')
-//            ->assertSee('Identification ratée');
-//    }
+    public function testLoginWithInValidCredentials(): void
+    {
+        $this->browser()->visit('/login')
+            ->fillField('inputEmail', self::$invalidCredentials->email)
+            ->fillField('inputPassword', self::$invalidCredentials->password)
+            ->clickAndIntercept('submit')
+            ->assertRedirectedTo('/login')
+            ->assertSee('Identification ratée');
+    }
 
 }
