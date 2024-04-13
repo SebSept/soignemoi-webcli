@@ -34,15 +34,15 @@ class SoigneMoiApiServiceTest extends TestCase
         $client = new MockHttpClient($mockResponse);
 
         // test avec client non mocké
-        // $apiUrl = 'http://192.168.176.1:32772';
-        // $client = HttpClient::create();
+//         $apiUrl = 'http://192.168.96.2:80';
+//         $apiUrl = 'http://192.168.176.1:32772';
+//         $client = HttpClient::create();
 
         // Act
         $api = new SoigneMoiApiService($client, $apiUrl);
         $response = $api->authenticate('test@test.com', 'hello');
 
         // Assert
-//        dump($response);
         $this->assertTrue($response->ok);
         $this->assertNotEmpty($response->token);
         $this->assertSame($token, $response->token); // pas possible de le prévoir pour une vrai requete.

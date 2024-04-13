@@ -101,10 +101,6 @@ psysh:
 pre-commit:
     {{composer}} run-script pre-commit
 
-install-pre-commit-hook:
-    echo "docker compose exec php symfony composer run-script pre-commit" > .git/hooks/pre-commit
-    {{docker_php_exec}} chmod +x .git/hooks/pre-commit
-
 [private]
 [confirm("Écraser .git/hooks/pre-commit ?")]
 install-pre-commit-hook:
