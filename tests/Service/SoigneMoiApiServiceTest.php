@@ -16,7 +16,7 @@ class SoigneMoiApiServiceTest extends TestCase
         $client = new MockHttpClient($mockResponse);
         $api = new SoigneMoiApiService($client, 'https://mock.me:666');
 
-        $response = $api->authenticate('email@email.com', 'password');
+        $response = $api->authenticatePatient('email@email.com', 'password');
         $this->assertFalse($response->ok);
     }    
     
@@ -40,11 +40,13 @@ class SoigneMoiApiServiceTest extends TestCase
 
         // Act
         $api = new SoigneMoiApiService($client, $apiUrl);
-        $response = $api->authenticate('test@test.com', 'hello');
+        $response = $api->authenticatePatient('patient@patient.com', 'hello');
 
         // Assert
         $this->assertTrue($response->ok);
         $this->assertNotEmpty($response->token);
         $this->assertSame($token, $response->token); // pas possible de le prévoir pour une vrai requete.
     }
+
+
 }

@@ -17,7 +17,7 @@ class LoginPageTest extends WebTestCase
     public static function setUpBeforeClass(): void
     {
         $credentials = new stdClass();
-        $credentials->email = 'test@test.com';
+        $credentials->email = 'patient@patient.com';
         $credentials->password = 'hello';
         self::$validCredentials = $credentials;
 
@@ -42,11 +42,13 @@ class LoginPageTest extends WebTestCase
     {
         $this->markAsRisky();
         // On ne peut pas mocker le serveur, il faut s\'assurer d\'avoir les bonnes données dans l\'api
+        // Ce qu'on peut faire, ça serait d'implémenter un authentificateur pour le mode test
+        // Cet auth considèrerait un certain mail/mot de passe comme valide et un autre comme invalide
         $this->browser()->visit('/login')
             ->fillField('inputEmail', self::$validCredentials->email)
             ->fillField('inputPassword', self::$validCredentials->password)
             ->clickAndIntercept('submit')
-            ->assertRedirectedTo('/home');
+            ->assertRedirectedTo('/sejours');
     }
 
     public function testLoginWithInValidCredentials(): void

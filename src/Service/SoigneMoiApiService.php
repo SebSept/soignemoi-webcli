@@ -26,7 +26,7 @@ readonly class SoigneMoiApiService
     ) {
     }
 
-    public function authenticate(string $email, string $password): ApiResponse
+    public function authenticatePatient(string $email, string $password): ApiResponse
     {
         $response = $this->httpClient->request(
             'POST',

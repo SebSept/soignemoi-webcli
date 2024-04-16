@@ -67,9 +67,11 @@ class SoigneMoiApiAuthenticator extends AbstractLoginFormAuthenticator
             new UserBadge($email, static fn ($email): User => new User($email)),
             new CustomCredentials(
                 function ($password, User $user): bool {
-                    $response = $this->api->authenticate($user->getEmail(), $password);
+                    $response = $this->api->authenticatePatient($user->getEmail(), $password);
+
+                    // données a persister dans la session pour les appels api à venir.
                     $user->setToken($response->token);
-                    // $user->eraseCredentials(); // @todo activer
+                    // $user->eraseCredentials(); // @todo activer - en fait non, ça doit se faire tout seul...
 
                     return $response->ok;
                 },

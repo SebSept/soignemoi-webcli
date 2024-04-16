@@ -1,12 +1,12 @@
 <form method="post" action="{{ path('app_login') }}">
     {% if error.messageKey is defined %}
-            {% if error.messageKey == 'Invalid credentials.' %}
-<p>Identification ratée</p>
-                    {% else %}
-                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                            {% endif %}
+        {% if error.messageKey == 'Invalid credentials.' %}
+            <p>Identification ratée</p>
+        {% else %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
 
-            <p>{{ error.messageKey }}</p>
+        <p>{{ error.messageKey }}</p>
     {% endif %}
 
     {% if app.user %}
@@ -16,6 +16,8 @@
     {% else %}
 
         <h1 class="h3 mb-3 font-weight-normal">Connexion</h1>
+
+        <p>patient@patient.com:hello</p>
 
         <label for="inputEmail">Email</label>
         <input type="text"

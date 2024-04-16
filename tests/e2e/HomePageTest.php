@@ -19,7 +19,7 @@ class HomePageTest extends WebTestCase
     public function testRedirectedToLoginPageIfNotAuthenticated(): void
     {
         $this->browser()->interceptRedirects()
-            ->visit('/home/')
+            ->visit('/sejours')
             ->assertNotAuthenticated()
             ->assertRedirectedTo('/login');
     }

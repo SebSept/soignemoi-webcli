@@ -20,12 +20,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserHomeController extends AbstractController
 {
-    #[Route('/home', name: 'app_user_home')]
+    #[Route('/sejours', name: 'app_user_home')]
     #[IsGranted('ROLE_PATIENT')]
     public function index(Security $security, SoigneMoiApiService $apiService): Response
     {
         return $this->render('user_home/index.html.twig', [
-            'controller_name' => 'UserHomeController',
+            'sejours' => [],
         ]);
     }
 }

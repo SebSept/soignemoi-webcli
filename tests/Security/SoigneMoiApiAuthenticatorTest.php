@@ -25,7 +25,7 @@ class SoigneMoiApiAuthenticatorTest extends TestCase
         $api = $this->createMock(SoigneMoiApiService::class);
         $tokenReturnedByApi = 'fake-token';
 //        $api->method('authenticate')->willReturn(new ApiResponse($tokenReturnedByApi, true));
-        $api->method('authenticate')->willReturn(new ApiResponse($tokenReturnedByApi, false));
+        $api->method('authenticatePatient')->willReturn(new ApiResponse($tokenReturnedByApi, false));
 
         $request = $this->createMock(Request::class);
         $request->method('getPayload')->willReturn(new InputBag(
