@@ -1,0 +1,6 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Cannot access property \\$accessToken on mixed\\.$#"
+			count: 1
+			path: src/Service/SoigneMoiApiService.php

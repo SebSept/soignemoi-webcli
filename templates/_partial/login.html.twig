@@ -1,10 +1,15 @@
 <form method="post" action="{{ path('app_login') }}">
     {% if error.messageKey is defined %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% if error.messageKey == 'Invalid credentials.' %}
+<p>Identification ratée</p>
+                    {% else %}
+                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                            {% endif %}
+
+            <p>{{ error.messageKey }}</p>
     {% endif %}
 
     {% if app.user %}
-            {{ dump(app.user) }}
         <div class="mb-3">
             You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
         </div>

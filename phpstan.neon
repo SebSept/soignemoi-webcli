@@ -6,4 +6,4 @@ parameters:
         - src/Factory/*
         - src/DataFixtures/*
 includes:
-#    - phpstan-baseline.neon
+    - phpstan-baseline.neon

@@ -46,10 +46,13 @@ readonly class SoigneMoiApiService
             return new ApiResponse('', false);
         }
 
-        dump($response->getStatusCode(), $response->getContent());
-
         try {
-            $token = json_decode($response->getContent(), flags: JSON_THROW_ON_ERROR)->accessToken ?? null;
+            $json = json_decode($response->getContent(), flags: JSON_THROW_ON_ERROR);
+            if (is_null($json)) {
+                throw new RuntimeException('Failed to decoded json (null)');
+            }
+
+            $token = $json->accessToken ?? null;
             if (is_null($token)) {
                 throw new RuntimeException('Pas de champs accessToken dans la réponse ');
             }
