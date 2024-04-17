@@ -22,6 +22,8 @@ class User implements UserInterface
 
     private string $token;
 
+    private int $id;
+
     public function __construct(private string $email)
     {
     }
@@ -90,5 +92,15 @@ class User implements UserInterface
     public function setToken(string $token): void
     {
         $this->token = $token;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 }

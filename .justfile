@@ -104,7 +104,7 @@ pre-commit:
 [private]
 [confirm("Écraser .git/hooks/pre-commit ?")]
 install-pre-commit-hook:
-    echo "docker compose exec php symfony composer run-script pre-commit" > .git/hooks/pre-commit
+    echo "docker compose exec -u climber php symfony composer run-script pre-commit" > .git/hooks/pre-commit
     {{docker_php_exec}} chmod +x .git/hooks/pre-commit
 
 # firt run docker compose up + composer install + open browser

@@ -10,7 +10,7 @@
         {% if sejours is not empty %}
             <ul>
                 {% for sejour in sejours %}
-                    <li>séjour</li>
+                    <li>{{ sejour.id }} {{ sejour.startDate|date("m/d/Y") }}</li>
                 {% endfor %}
             </ul>
 

@@ -2,8 +2,7 @@
 
 namespace App\Tests\Service;
 
-use App\Service\ApiException;
-use App\Service\InvalidRoleException;
+use App\Entity\HospitalStay;
 use App\Service\SoigneMoiApiService;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -12,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SoigneMoiApiServiceTest extends TestCase
 {
+    
     public function testAuthenticationFailsIfUnAuthorized(): void
     {
         $mockResponse = new MockResponse('', ['http_code' => Response::HTTP_UNAUTHORIZED]);
@@ -20,6 +20,7 @@ class SoigneMoiApiServiceTest extends TestCase
 
         $response = $api->authenticatePatient('email@email.com', 'password');
         $this->assertFalse($response->ok);
+        // @todo tester les champs attendus
     }
 
     public function testAuthenticationFailsIfNoJsonResponse(): void
@@ -91,10 +92,12 @@ class SoigneMoiApiServiceTest extends TestCase
         // Arrange
         $token = 'valid-token';
         $apiUrl = 'https://mock.me:666';
+        $id = 44;
         $mockResponse = new MockResponse(
             json_encode([
-                    'accessToken' => $token,
+                'accessToken' => $token,
                 'role' => 'ROLE_PATIENT',
+                'id' => $id
             ]),
             ['http_code' => Response::HTTP_OK]
         );
@@ -112,8 +115,24 @@ class SoigneMoiApiServiceTest extends TestCase
         // Assert
         $this->assertTrue($response->ok);
         $this->assertNotEmpty($response->token);
-        $this->assertSame($token, $response->token); // pas possible de le prévoir pour une vrai requete.
+        $this->assertSame('ROLE_PATIENT', $response->role);
+        $this->assertSame($token, $response->token);
+        $this->assertSame($id, $response->id);
     }
 
+    public function testGetHospitalStays(): void
+    {
+        $apiUrl = 'https://mock.me:666';
+        $mockResponse = new MockResponse(
+            file_get_contents(__DIR__.'/response_hospital_stays.json'),
+            ['http_code' => Response::HTTP_OK]
+        );
+        $client = new MockHttpClient($mockResponse);
+        $api = new SoigneMoiApiService($client, $apiUrl);
+        $api->setToken('valid-token');
+        $hospitalStays = $api->getHospitalStays(44);
+
+        $this->assertContainsOnlyInstancesOf(HospitalStay::class, $hospitalStays);
+    }
 
 }

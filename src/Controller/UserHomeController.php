@@ -24,8 +24,10 @@ class UserHomeController extends AbstractController
     #[IsGranted('ROLE_PATIENT')]
     public function index(Security $security, SoigneMoiApiService $apiService): Response
     {
+        $apiService->setToken($security->getUser()->getToken()); /* @phpstan-ignore-line */
+
         return $this->render('user_home/index.html.twig', [
-            'sejours' => [],
+            'sejours' => $apiService->getHospitalStays($security->getUser()->getId()), /* @phpstan-ignore-line */
         ]);
     }
 }

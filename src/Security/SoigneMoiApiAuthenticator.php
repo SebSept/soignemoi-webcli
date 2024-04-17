@@ -71,7 +71,8 @@ class SoigneMoiApiAuthenticator extends AbstractLoginFormAuthenticator
 
                     // données a persister dans la session pour les appels api à venir.
                     $user->setToken($response->token);
-                    // $user->eraseCredentials(); // @todo activer - en fait non, ça doit se faire tout seul...
+                    $user->setRoles([$response->role]);
+                    $user->setId($response->id);
 
                     return $response->ok;
                 },

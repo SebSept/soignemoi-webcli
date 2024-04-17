@@ -1,0 +1,67 @@
+[
+  {
+    "id": 727,
+    "startDate": "2024-05-22T00:00:00+00:00",
+    "endDate": "2024-05-22T00:00:00+00:00",
+    "reason": "Aut et dolores dignissimos ullam non impedit necessitatibus. Earum quam ea expedita voluptate. Dolor optio voluptatem cum et doloremque eligendi. Illum dolore consequuntur et sit aspernatur doloremque et.",
+    "medicalSpeciality": "oncologie",
+    "patient": "/api/patients/672",
+    "doctor": "/api/doctors/652"
+  },
+  {
+    "id": 728,
+    "startDate": "2024-04-13T00:00:00+00:00",
+    "endDate": "2024-04-15T00:00:00+00:00",
+    "checkin": "2024-04-14T01:36:24+00:00",
+    "checkout": "2024-04-16T04:36:24+00:00",
+    "reason": "Numquam totam sequi cupiditate voluptatem fuga et. Qui quaerat tempore non ullam amet placeat aut. Enim minima ut non aliquid.",
+    "medicalSpeciality": "pédiatrie",
+    "patient": "/api/patients/672",
+    "doctor": "/api/doctors/658"
+  },
+  {
+    "id": 729,
+    "startDate": "2024-04-29T00:00:00+00:00",
+    "endDate": "2024-04-30T00:00:00+00:00",
+    "reason": "Tempore ut temporibus vel voluptatem. Dolorum aliquam nulla cumque fugiat nisi. Sunt autem sunt labore ad quos eaque dolorem temporibus.",
+    "medicalSpeciality": "ophtalmologie",
+    "patient": "/api/patients/672",
+    "doctor": "/api/doctors/652"
+  },
+  {
+    "id": 730,
+    "startDate": "2024-04-22T00:00:00+00:00",
+    "endDate": "2024-04-26T00:00:00+00:00",
+    "reason": "Explicabo id quidem id placeat. Nihil ex magnam est voluptates occaecati deserunt quidem. Similique nobis dolorum vitae.",
+    "medicalSpeciality": "pédiatrie",
+    "patient": "/api/patients/672",
+    "doctor": "/api/doctors/649"
+  },
+  {
+    "id": 731,
+    "startDate": "2024-06-02T00:00:00+00:00",
+    "endDate": "2024-06-03T00:00:00+00:00",
+    "reason": "Facere earum aperiam quis maiores ab facilis. Enim omnis quos facere corrupti. Porro odit provident beatae consequatur in amet voluptas nemo. Hic deserunt quo vel qui nam voluptatibus. Quod debitis odio quasi et voluptas deserunt repudiandae.",
+    "medicalSpeciality": "psychiatrie",
+    "patient": "/api/patients/672",
+    "doctor": "/api/doctors/655"
+  },
+  {
+    "id": 732,
+    "startDate": "2024-07-27T00:00:00+00:00",
+    "endDate": "2024-08-01T00:00:00+00:00",
+    "reason": "Incidunt minima debitis culpa reiciendis omnis. Quod quia laboriosam eveniet in. Aperiam dignissimos quod exercitationem hic. Cumque vero et in blanditiis et nostrum. Debitis architecto ipsum quis reiciendis suscipit voluptas natus.",
+    "medicalSpeciality": "oncologie",
+    "patient": "/api/patients/672",
+    "doctor": "/api/doctors/649"
+  },
+  {
+    "id": 733,
+    "startDate": "2024-08-06T00:00:00+00:00",
+    "endDate": "2024-08-07T00:00:00+00:00",
+    "reason": "Aliquam occaecati id labore ea aut. Veniam aut molestias dolor. Doloremque officiis voluptatem vitae et exercitationem est voluptatem.",
+    "medicalSpeciality": "ophtalmologie",
+    "patient": "/api/patients/672",
+    "doctor": "/api/doctors/648"
+  }
+]
