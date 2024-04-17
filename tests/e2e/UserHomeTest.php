@@ -21,4 +21,12 @@ class UserHomeTest extends WebTestCase
             ->visit('/sejours')
             ->assertSuccessful();
     }
+
+    public function testNotLoggedViewHospitalStaysRedirectedToLogin(): void
+    {
+        $this->browser()
+            ->interceptRedirects()
+            ->visit('/sejours')
+            ->assertRedirectedTo('/login');
+    }
 }
