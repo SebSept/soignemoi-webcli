@@ -9,7 +9,7 @@ services:
     networks:
       nginx: null
     ports:
-      - target: 80
+      - target: 90
         published: "${NGINX_PORT}"
     restart: unless-stopped
     volumes:
@@ -22,8 +22,8 @@ services:
   php:
     image: ghcr.io/sebsept/docker-php-symfony-starter:main
     networks:
-      nginx: null
-      partage: null
+      - nginx
+      - partage
     restart: unless-stopped
     user: 0:1000
     volumes:
