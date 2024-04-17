@@ -30,11 +30,12 @@ class SoigneMoiApiServiceTest extends TestCase
         $api = new SoigneMoiApiService($client, 'https://mock.me:666');
 
         // Assert
-        $this->expectException(ApiException::class);
-        $this->expectExceptionMessageMatches('/.*Syntax error.*/');
+//        $this->expectException(ApiException::class);
+//        $this->expectExceptionMessageMatches('/.*Syntax error.*/');
 
         // Act
-        $api->authenticatePatient('email@email.com', 'password');
+        $response = $api->authenticatePatient('email@email.com', 'password');
+        $this->assertFalse($response->ok);
     }
 
     public function testAuthenticationFailsIfNoTokenReceived(): void
@@ -45,11 +46,12 @@ class SoigneMoiApiServiceTest extends TestCase
         $api = new SoigneMoiApiService($client, 'https://mock.me:666');
 
         // Assert
-        $this->expectException(ApiException::class);
-        $this->expectExceptionMessageMatches('/.*no accessToken field*/');
+//        $this->expectException(ApiException::class);
+//        $this->expectExceptionMessageMatches('/.*no accessToken field*/');
 
         // Act
-        $api->authenticatePatient('email@email.com', 'password');
+        $response = $api->authenticatePatient('email@email.com', 'password');
+        $this->assertFalse($response->ok);
     }
 
     public function testAuthenticationFailsIfNoRoleReceived(): void 
@@ -60,11 +62,12 @@ class SoigneMoiApiServiceTest extends TestCase
         $api = new SoigneMoiApiService($client, 'https://mock.me:666');
 
         // Assert
-        $this->expectException(ApiException::class);
-        $this->expectExceptionMessageMatches('/.*no Role field*/');
+//        $this->expectException(ApiException::class);
+//        $this->expectExceptionMessageMatches('/.*no Role field*/');
 
         // Act
-        $api->authenticatePatient('email@email.com', 'password');
+        $response = $api->authenticatePatient('email@email.com', 'password');
+        $this->assertFalse($response->ok);
     }
 
     public function testAuthenticationFailsRoleIsNotPatient(): void
@@ -75,11 +78,12 @@ class SoigneMoiApiServiceTest extends TestCase
         $api = new SoigneMoiApiService($client, 'https://mock.me:666');
 
         // Assert
-        $this->expectException(InvalidRoleException::class);
-        $this->expectExceptionMessageMatches('/.*doctor*/');
+//        $this->expectException(InvalidRoleException::class);
+//        $this->expectExceptionMessageMatches('/.*doctor*/');
 
         // Act
-        $api->authenticatePatient('email@email.com', 'password');
+        $response = $api->authenticatePatient('email@email.com', 'password');
+        $this->assertFalse($response->ok);
     }
     
     public function testAuthenticationSuccessful(): void

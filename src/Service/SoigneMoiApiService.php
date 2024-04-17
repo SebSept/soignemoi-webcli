@@ -64,13 +64,14 @@ readonly class SoigneMoiApiService
             if ('ROLE_PATIENT' !== $role) {
                 throw new InvalidRoleException('Expected ROLE_PATIENT but got '.$role);
             }
-        } catch (Exception $exception) {
+        } catch (Exception) {
+            return new ApiResponse('', false); // @todo message et/ou log
             // pas de recapture pour les exceptions déjà de notre type
-            if ($exception instanceof ApiException) {
-                throw $exception;
-            }
-
-            throw new ApiException('Erreur authentification : '.$exception->getMessage().' - '.$response->getContent(), $exception->getCode(), $exception);
+            //            if ($exception instanceof ApiException) {
+            //                throw $exception;
+            //            }
+            //
+            //            throw new ApiException('Erreur authentification : '.$exception->getMessage().' - '.$response->getContent(), $exception->getCode(), $exception);
         }
 
         return new ApiResponse($token, true);
