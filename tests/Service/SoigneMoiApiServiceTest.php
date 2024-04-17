@@ -2,6 +2,8 @@
 
 namespace App\Tests\Service;
 
+use App\Service\ApiException;
+use App\Service\InvalidRoleException;
 use App\Service\SoigneMoiApiService;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -10,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SoigneMoiApiServiceTest extends TestCase
 {
-    public function testAuthenticationFails(): void
+    public function testAuthenticationFailsIfUnAuthorized(): void
     {
         $mockResponse = new MockResponse('', ['http_code' => Response::HTTP_UNAUTHORIZED]);
         $client = new MockHttpClient($mockResponse);
@@ -18,7 +20,67 @@ class SoigneMoiApiServiceTest extends TestCase
 
         $response = $api->authenticatePatient('email@email.com', 'password');
         $this->assertFalse($response->ok);
-    }    
+    }
+
+    public function testAuthenticationFailsIfNoJsonResponse(): void
+    {
+        // Arrange
+        $mockResponse = new MockResponse('gloup gloup not json Contents', ['http_code' => Response::HTTP_OK]);
+        $client = new MockHttpClient($mockResponse);
+        $api = new SoigneMoiApiService($client, 'https://mock.me:666');
+
+        // Assert
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessageMatches('/.*Syntax error.*/');
+
+        // Act
+        $api->authenticatePatient('email@email.com', 'password');
+    }
+
+    public function testAuthenticationFailsIfNoTokenReceived(): void
+    {
+        // Arrange
+        $mockResponse = new MockResponse('{"bla": "bla"}', ['http_code' => Response::HTTP_OK]);
+        $client = new MockHttpClient($mockResponse);
+        $api = new SoigneMoiApiService($client, 'https://mock.me:666');
+
+        // Assert
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessageMatches('/.*no accessToken field*/');
+
+        // Act
+        $api->authenticatePatient('email@email.com', 'password');
+    }
+
+    public function testAuthenticationFailsIfNoRoleReceived(): void 
+    {
+        // Arrange
+        $mockResponse = new MockResponse('{"accessToken": "123"}', ['http_code' => Response::HTTP_OK]);
+        $client = new MockHttpClient($mockResponse);
+        $api = new SoigneMoiApiService($client, 'https://mock.me:666');
+
+        // Assert
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessageMatches('/.*no Role field*/');
+
+        // Act
+        $api->authenticatePatient('email@email.com', 'password');
+    }
+
+    public function testAuthenticationFailsRoleIsNotPatient(): void
+    {
+        // Arrange
+        $mockResponse = new MockResponse('{"accessToken": "123", "role": "doctor"}', ['http_code' => Response::HTTP_OK]);
+        $client = new MockHttpClient($mockResponse);
+        $api = new SoigneMoiApiService($client, 'https://mock.me:666');
+
+        // Assert
+        $this->expectException(InvalidRoleException::class);
+        $this->expectExceptionMessageMatches('/.*doctor*/');
+
+        // Act
+        $api->authenticatePatient('email@email.com', 'password');
+    }
     
     public function testAuthenticationSuccessful(): void
     {
@@ -28,6 +90,7 @@ class SoigneMoiApiServiceTest extends TestCase
         $mockResponse = new MockResponse(
             json_encode([
                     'accessToken' => $token,
+                'role' => 'ROLE_PATIENT',
             ]),
             ['http_code' => Response::HTTP_OK]
         );

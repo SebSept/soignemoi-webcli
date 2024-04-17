@@ -47,17 +47,30 @@ readonly class SoigneMoiApiService
         }
 
         try {
+            /** @var object{accessToken: string, role: string} $json */
             $json = json_decode($response->getContent(), flags: JSON_THROW_ON_ERROR);
-            if (is_null($json)) {
-                throw new RuntimeException('Failed to decoded json (null)');
+            $token = $json->accessToken ?? null;
+            // json bien décodé mais ne contient pas de champs accessToken (ou est exactement null)
+            if (is_null($token)) {
+                throw new RuntimeException('no accessToken field');
             }
 
-            $token = $json->accessToken ?? null;
-            if (is_null($token)) {
-                throw new RuntimeException('Pas de champs accessToken dans la réponse ');
+            $role = $json->role ?? null;
+            // json bien décodé mais ne contient pas de champs accessToken (ou est exactement null)
+            if (is_null($role)) {
+                throw new RuntimeException('no Role field');
+            }
+
+            if ('ROLE_PATIENT' !== $role) {
+                throw new InvalidRoleException('Expected ROLE_PATIENT but got '.$role);
             }
         } catch (Exception $exception) {
-            throw new RuntimeException('Erreur lors de la récupération du token : '.$exception->getMessage().' - '.$response->getContent(), $exception->getCode(), $exception);
+            // pas de recapture pour les exceptions déjà de notre type
+            if ($exception instanceof ApiException) {
+                throw $exception;
+            }
+
+            throw new ApiException('Erreur authentification : '.$exception->getMessage().' - '.$response->getContent(), $exception->getCode(), $exception);
         }
 
         return new ApiResponse($token, true);
