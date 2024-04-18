@@ -11,23 +11,24 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Security\User;
 use App\Service\SoigneMoiApiService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserHomeController extends AbstractController
 {
     #[Route('/sejours', name: 'app_user_home')]
     #[IsGranted('ROLE_PATIENT')]
-    public function index(Security $security, SoigneMoiApiService $apiService): Response
+    public function index(#[CurrentUser] User $user, SoigneMoiApiService $apiService): Response
     {
-        $apiService->setToken($security->getUser()->getToken()); /* @phpstan-ignore-line */
+        $apiService->setToken($user->getToken());
 
         return $this->render('user_home/index.html.twig', [
-            'sejours' => $apiService->getHospitalStays($security->getUser()->getId()), /* @phpstan-ignore-line */
+            'sejours' => $apiService->getHospitalStays($user->getId()),
         ]);
     }
 }

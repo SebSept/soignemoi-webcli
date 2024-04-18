@@ -79,7 +79,6 @@ class User implements UserInterface
      */
     public function eraseCredentials(): void
     {
-        $this->token = 'noop';
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
