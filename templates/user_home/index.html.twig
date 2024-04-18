@@ -8,11 +8,26 @@
         <h1>Mes séjours</h1>
 
         {% if sejours is not empty %}
-            <ul>
+            <table>
+                <thead>
+                <tr>
+                    <th>Date d'arrivée</th>
+                    <th>Date de sortie</th>
+                    <th>Motif</th>
+                    <th>Spécialité</th>
+{#                    <th>Medecin</th>#}
+                </tr>
+                </thead>
                 {% for sejour in sejours %}
-                    <li>{{ sejour.id }} {{ sejour.startDate|date("m/d/Y") }}</li>
+                    <tr>
+                    <td>{{ sejour.startDate|date('d/m/Y') }}</td>
+                    <td>{{ sejour.endDate|date('d/m/Y') }}</td>
+                    <td title="{{ sejour.reason }}">{{ sejour.reason|u.truncate(50, '...') }}</td>
+                    <td>{{ sejour.medicalSpeciality }}</td>
+{#                    <td>{{ sejour.doctorName }}</td>#}
+                        </tr>
                 {% endfor %}
-            </ul>
+            </table>
 
         {% else %}
             <p>Pas de séjours</p>

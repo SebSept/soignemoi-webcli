@@ -130,6 +130,7 @@ class SoigneMoiApiServiceTest extends TestCase
         $client = new MockHttpClient($mockResponse);
         $api = new SoigneMoiApiService($client, $apiUrl);
         $api->setToken('valid-token');
+
         $hospitalStays = $api->getHospitalStays(44);
 
         $this->assertContainsOnlyInstancesOf(HospitalStay::class, $hospitalStays);
