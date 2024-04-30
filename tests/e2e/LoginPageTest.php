@@ -40,7 +40,7 @@ class LoginPageTest extends WebTestCase
 
     public function testLoginWithValidCredentials(): void
     {
-        $this->markAsRisky();
+        $this->markTestSkipped('test avec vrais appel api -> skipped');
         // On ne peut pas mocker le serveur, il faut s\'assurer d\'avoir les bonnes données dans l\'api
         // Ce qu'on peut faire, ça serait d'implémenter un authentificateur pour le mode test
         // Cet auth considèrerait un certain mail/mot de passe comme valide et un autre comme invalide
@@ -53,6 +53,8 @@ class LoginPageTest extends WebTestCase
 
     public function testLoginWithInValidCredentials(): void
     {
+        $this->markTestSkipped('test avec vrais appel api -> skipped');
+        // cf notes dans test précédent
         $this->browser()->visit('/login')
             ->fillField('inputEmail', self::$invalidCredentials->email)
             ->fillField('inputPassword', self::$invalidCredentials->password)

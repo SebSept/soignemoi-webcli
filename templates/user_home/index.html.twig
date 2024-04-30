@@ -15,7 +15,7 @@
                     <th>Date de sortie</th>
                     <th>Motif</th>
                     <th>Spécialité</th>
-{#                    <th>Medecin</th>#}
+{# <th>Medecin</th> #}
                 </tr>
                 </thead>
                 {% for sejour in sejours %}
@@ -24,7 +24,7 @@
                     <td>{{ sejour.endDate|date('d/m/Y') }}</td>
                     <td title="{{ sejour.reason }}">{{ sejour.reason|u.truncate(50, '...') }}</td>
                     <td>{{ sejour.medicalSpeciality }}</td>
-{#                    <td>{{ sejour.doctorName }}</td>#}
+{# <td>{{ sejour.doctorName }}</td> #}
                         </tr>
                 {% endfor %}
             </table>
