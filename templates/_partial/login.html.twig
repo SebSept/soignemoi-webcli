@@ -2,13 +2,13 @@
 
     {# message d'erreur #}
     {% if error.messageKey is defined %}
+        <div class="alert alert-danger">
         {% if error.messageKey == 'Invalid credentials.' %}
             <p>Identification ratée</p>
         {% else %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
         {% endif %}
-
-        <p>{{ error.messageKey }}</p>
+        </div>
     {% endif %}
 
     {# affichage de l'identitié de l'utilisateur et lien de logout #}
@@ -23,6 +23,8 @@
 
         {% if app.debug %}
             <p>patient@patient.com:hello</p>
+            <p>doctor@doctor.com</p>
+            <p>secretaire@secretaire.com</p>
         {% endif %}
 
         <label for="inputEmail">Email</label>
