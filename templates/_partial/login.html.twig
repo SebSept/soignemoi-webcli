@@ -1,4 +1,6 @@
 <form method="post" action="{{ path('app_login') }}">
+
+    {# message d'erreur #}
     {% if error.messageKey is defined %}
         {% if error.messageKey == 'Invalid credentials.' %}
             <p>Identification ratée</p>
@@ -9,15 +11,19 @@
         <p>{{ error.messageKey }}</p>
     {% endif %}
 
+    {# affichage de l'identitié de l'utilisateur et lien de logout #}
     {% if app.user %}
         <div class="mb-3">
             You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
         </div>
+        {# form de connexion #}
     {% else %}
 
-        <h1 class="h3 mb-3 font-weight-normal">Connexion</h1>
+        <h1 class="h3 mb-3 font-weight-normal">Identification</h1>
 
-        <p>patient@patient.com:hello</p>
+        {% if app.debug %}
+            <p>patient@patient.com:hello</p>
+        {% endif %}
 
         <label for="inputEmail">Email</label>
         <input type="text"
@@ -40,8 +46,8 @@
                value="{{ csrf_token('authenticate') }}"
         >
 
-        <button class="btn btn-lg btn-primary" type="submit" id="submit">
-            Sign in
+        <button class="btn btn-lg btn-primary m-2" type="submit" id="submit">
+            Connexion
         </button>
 
     {% endif %}

@@ -100,6 +100,7 @@
       "importmap:install": "symfony-cmd"
     },
     "cs-fixer": "php-cs-fixer fix",
+    "import-map": "@php bin/console importmap:audit",
     "phpstan": "phpstan",
     "pre-commit": [
       "symfony composer validate",
@@ -107,6 +108,7 @@
       "@cs-fixer",
       "@twig-lint",
       "symfony composer normalize",
+      "@import-map",
       "@phpstan",
       "@tests"
     ],

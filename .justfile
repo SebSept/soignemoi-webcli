@@ -15,6 +15,8 @@ update: && tests
     docker compose down
     docker compose up -d --build
     {{composer}} install
+    {{console}} importmap:install
+    {{console}} importmap:outdated
 
 # open web browser
 browser:
