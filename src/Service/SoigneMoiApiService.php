@@ -27,6 +27,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 class SoigneMoiApiService
 {
+    public const ALLOWED_ROLES = ['ROLE_PATIENT', 'ROLE_DOCTOR', 'ROLE_SECRETARY', 'ROLE_ADMIN'];
+
     private string $token;
 
     private readonly Serializer $serializer;
@@ -46,7 +48,7 @@ class SoigneMoiApiService
             [new JsonEncoder()]);
     }
 
-    public function authenticatePatient(string $email, string $password): ApiResponse
+    public function authenticateUser(string $email, string $password): ApiResponse
     {
         $response = $this->httpClient->request(
             'POST',
@@ -87,17 +89,11 @@ class SoigneMoiApiService
                 throw new RuntimeException('no id field');
             }
 
-            if ('ROLE_PATIENT' !== $role) {
+            if (!in_array($role, self::ALLOWED_ROLES)) {
                 throw new InvalidRoleException('Expected ROLE_PATIENT but got '.$role);
             }
         } catch (Exception) {
             return new ApiResponse(ok: false); // @todo message et/ou log
-            // pas de recapture pour les exceptions déjà de notre type
-            //            if ($exception instanceof ApiException) {
-            //                throw $exception;
-            //            }
-            //
-            //            throw new ApiException('Erreur authentification : '.$exception->getMessage().' - '.$response->getContent(), $exception->getCode(), $exception);
         }
 
         return new ApiResponse(true, $token, $role, $id);
