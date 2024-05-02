@@ -29,6 +29,8 @@ class SoigneMoiApiService
 {
     public const ALLOWED_ROLES = ['ROLE_PATIENT', 'ROLE_DOCTOR', 'ROLE_SECRETARY', 'ROLE_ADMIN'];
 
+    public const ALLOWED_ROLES_WITHOUT_ID = ['ROLE_SECRETARY', 'ROLE_ADMIN'];
+
     private string $token;
 
     private readonly Serializer $serializer;
@@ -50,50 +52,49 @@ class SoigneMoiApiService
 
     public function authenticateUser(string $email, string $password): ApiResponse
     {
-        $response = $this->httpClient->request(
-            'POST',
-            $this->apiUrl.'/token',
-            [
-                'json' => [
-                    'email' => $email,
-                    'password' => $password,
-                ],
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                ],
-            ]);
-
-        if (200 !== $response->getStatusCode()) {
-            return new ApiResponse(ok: false);
-        }
-
         try {
+            $response = $this->httpClient->request(
+                'POST',
+                $this->apiUrl.'/token',
+                [
+                    'json' => [
+                        'email' => $email,
+                        'password' => $password,
+                    ],
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                    ],
+                ]);
+
+            if (200 !== $response->getStatusCode()) {
+                // @todo a logger
+                return new ApiResponse(ok: false);
+            }
+
             /** @var object{accessToken: string, role: string, id: int} $json */
             $json = json_decode($response->getContent(), flags: JSON_THROW_ON_ERROR);
             $token = $json->accessToken ?? null;
-            // json bien décodé mais ne contient pas de champs accessToken (ou est exactement null)
             if (is_null($token)) {
                 throw new RuntimeException('no accessToken field');
             }
 
             $role = $json->role ?? null;
-            // json bien décodé mais ne contient pas de champs accessToken (ou est exactement null)
             if (is_null($role)) {
                 throw new RuntimeException('no Role field');
             }
 
             $id = $json->id ?? null;
-            // json bien décodé mais ne contient pas de champs accessToken (ou est exactement null)
-            if (is_null($id)) {
-                throw new RuntimeException('no id field');
+            // secrétaire et admin n'ont pas d'id.
+            if (!in_array($role, self::ALLOWED_ROLES_WITHOUT_ID) && is_null($id)) {
+                throw new RuntimeException('no id field '.var_export(json_encode($json), true));
             }
 
             if (!in_array($role, self::ALLOWED_ROLES)) {
-                throw new InvalidRoleException('Expected ROLE_PATIENT but got '.$role);
+                throw new InvalidRoleException('Expected role "'.$role.'"');
             }
         } catch (Exception) {
-            return new ApiResponse(ok: false); // @todo message et/ou log
+            return new ApiResponse(false);
         }
 
         return new ApiResponse(true, $token, $role, $id);
@@ -121,7 +122,8 @@ class SoigneMoiApiService
                 throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
             }
 
-            return $this->serializer->deserialize($response->getContent(), 'App\Entity\HospitalStay[]', 'json'); /* @phpstan-ignore-line */
+            /* @phpstan-ignore-next-line */
+            return $this->serializer->deserialize($response->getContent(), 'App\Entity\HospitalStay[]', 'json');
         } catch (Exception $exception) {
             throw new ApiException('Erreur récupération des séjours : '.$exception->getMessage(), $exception->getCode(), $exception);
         }

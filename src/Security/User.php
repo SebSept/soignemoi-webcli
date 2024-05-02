@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
+use Exception;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class User implements UserInterface
@@ -22,7 +23,7 @@ class User implements UserInterface
 
     private string $token;
 
-    private int $id;
+    private ?int $id = null;
 
     public function __construct(private string $email)
     {
@@ -53,22 +54,22 @@ class User implements UserInterface
     /**
      * @see UserInterface
      *
-     * @return list<string>
+     * @return string[]
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_PATIENT
-        $roles[] = 'ROLE_PATIENT';
-
-        return array_unique($roles);
+        return $this->roles;
     }
 
     /**
-     * @param list<string> $roles
+     * @param string[] $roles
      */
     public function setRoles(array $roles): static
     {
+        if (count($roles) > 1) {
+            throw new Exception('Un seul role possible dans notre systeme.');
+        }
+
         $this->roles = $roles;
 
         return $this;
@@ -93,12 +94,12 @@ class User implements UserInterface
         $this->token = $token;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): void
+    public function setId(?int $id): void
     {
         $this->id = $id;
     }

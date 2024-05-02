@@ -17,7 +17,7 @@ readonly class ApiResponse
         public bool $ok,
         public string $token = '',
         public string $role = '',
-        public int $id = 0,
+        public ?int $id = null,
     ) {
     }
 }

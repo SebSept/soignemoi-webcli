@@ -2,7 +2,6 @@
 
 namespace App\Tests\e2e;
 
-use stdClass;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Browser\Test\HasBrowser;
 
@@ -10,31 +9,71 @@ class LoginPageTest extends WebTestCase
 {
     use HasBrowser;
 
-    private static object $validCredentials;
+    public const PATIENT_CREDENTIALS = [
+        'userName' => 'patient@patient.com',
+        'password' => 'hello',
+        'expectedUrl' => '/sejours',
+    ];
 
-    private static object $invalidCredentials;
+    public const DOCTOR_CREDENTIALS = [
+        'userName' => 'doctor@doctor.com',
+        'password' => 'hello',
+        'expectedUrl' => '/doctor/patients/today',
+    ];
 
-    public static function setUpBeforeClass(): void
+    public const SECRETARY_CREDENTIALS = [
+        'userName' => 'secretaire@secretaire.com',
+        'password' => 'hello',
+        'expectedUrl' => '/secretary/',
+    ];
+
+    public const ADMIN_CREDENTIALS = [
+        'userName' => 'admin@admin.com',
+        'password' => 'hello',
+        'expectedUrl' => '/admin/',
+    ];
+
+    public function testLoginAsPatientIsRedirectedToPatientHomePage(): void
     {
-        $credentials = new stdClass();
-        $credentials->email = 'patient@patient.com';
-        $credentials->password = 'hello';
-        self::$validCredentials = $credentials;
+        $this->testLogin(...self::PATIENT_CREDENTIALS);
+    }
 
-        $credentials = new stdClass();
-        $credentials->email = 'invalid@invalid.com';
-        $credentials->password = 'invalid-password';
-        self::$invalidCredentials = $credentials;
+    public function testLoginAsDoctorIsRedirectedToDoctorHomePage(): void
+    {
+        $this->testLogin(...self::DOCTOR_CREDENTIALS);
+    }
 
-        parent::setUpBeforeClass();
+    public function testLoginAsSecretaryIsRedirectedToSecretaryHomePage(): void
+    {
+        $this->testLogin(...self::SECRETARY_CREDENTIALS);
+    }
+
+    public function testLoginAsAdminIsRedirectedToAdminHomePage(): void
+    {
+        $this->testLogin(...self::ADMIN_CREDENTIALS);
     }
 
 
-    public function testViewLoginFormIfNotLoggedIn(): void
+    private function testLogin(string $userName, string $password, string $expectedUrl): void
     {
-        $this->browser()->visit('/login')
-            ->assertSuccessful()
+        $browser = $this->browser()->visit('/login');
+
+        // Act
+        // view login form
+        $browser->assertSuccessful()
             ->assertSee('Connexion')
             ->assertSeeElement('form');
+
+        // fill & submit form
+        $browser
+            ->fillField('inputEmail', $userName)
+            ->fillField('inputPassword', $password)
+            ->clickAndIntercept('submit');
+
+        // Assert
+        $browser->assertRedirectedTo($expectedUrl)
+        ->assertSuccessful()
+        ;
     }
+
 }
