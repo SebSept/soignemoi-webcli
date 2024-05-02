@@ -130,7 +130,6 @@ class SoigneMoiApiService
     }
 
     /**
-     * @param int $doctorId
      * @return HospitalStay[]
      */
     public function getTodayPatientsForDoctor(int $doctorId): array

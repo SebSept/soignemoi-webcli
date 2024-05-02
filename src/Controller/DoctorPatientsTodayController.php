@@ -13,6 +13,7 @@ namespace App\Controller;
 
 use App\Security\User;
 use App\Service\SoigneMoiApiService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,12 +26,13 @@ class DoctorPatientsTodayController extends AbstractController
     {
         $apiService->setToken($user->getToken());
         if (is_null($user->getId())) {
-            throw new \Exception('Id user null, doit être défini pour le patient lui même.');
+            throw new Exception('Id user null, doit être défini pour le patient lui même.');
         }
 
         $hospitalStays = $apiService->getTodayPatientsForDoctor($user->getId());
+
         return $this->render('doctor/patients/today.html.twig', [
-            'stays' => $hospitalStays
+            'stays' => $hospitalStays,
         ]);
     }
 }
