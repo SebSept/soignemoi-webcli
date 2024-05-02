@@ -24,6 +24,9 @@ readonly class HospitalStay
         public ?DateTimeInterface $checkout,
         public string $reason,
         public string $medicalSpeciality,
+        public Patient $patient,
+        public ?Prescription $todayPrescription,
+        public ?MedicalOpinion $todayMedicalOpinion,
         // public Doctor $doctor, // @todo champs rendre serialisé pour avoir le nom/prénom du doc.
     ) {
     }

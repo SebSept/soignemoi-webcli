@@ -1,20 +1,49 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello TodayPatientsController!{% endblock %}
+{% block title %}Patients du jour{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello ! ✅</h1>
+    <h1>Patients du jour</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/app/src/Controller/TodayPatientsController.php</code></li>
-        <li>Your template at <code>/app/templates/today_patients/index.html.twig</code></li>
-    </ul>
-</div>
+    <div class="row">
+
+        <div class="col">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+
+                    <th>Patient</th>
+                    <th>Motif</th>
+                    <th>Prescription</th>
+                    <th>Avis</th>
+                </tr>
+
+                </thead>
+                <tbody>
+                {% for stay in stays %}
+                    <tr>
+                        <td>{{ stay.patient.fullName }}</td>
+                        <td>{{ stay.reason }}</td>
+                        <td>
+                            {% if stay.todayPrescription is null %}
+{#                                <a href="{{ path('') }}" >Prescrire</a>#}
+                                <a href="#" >Prescrire</a>
+                            {% else %}
+                                <a href="#">Modifier la prescription {{ stay.todayPrescription.id }}</a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if stay.todayMedicalOpinion is null %}
+                                Pas d'avis medical
+                            {% else %}
+                                {{ dump(stay.todayMedicalOpinion) }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}

@@ -128,4 +128,29 @@ class SoigneMoiApiService
             throw new ApiException('Erreur récupération des séjours : '.$exception->getMessage(), $exception->getCode(), $exception);
         }
     }
+
+    /**
+     * @param int $doctorId
+     * @return HospitalStay[]
+     */
+    public function getTodayPatientsForDoctor(int $doctorId): array
+    {
+        try {
+            $response = $this->httpClient->request('GET', $this->apiUrl.'/api/doctors/'.$doctorId.'/hospital_stays/today', [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer '.$this->token,
+                ],
+            ]);
+
+            if (200 !== $response->getStatusCode()) {
+                throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
+            }
+
+            /* @phpstan-ignore-next-line */
+            return $this->serializer->deserialize($response->getContent(), 'App\Entity\HospitalStay[]', 'json');
+        } catch (Exception $exception) {
+            throw new ApiException('Erreur récupération des séjours : '.$exception->getMessage(), $exception->getCode(), $exception);
+        }
+    }
 }
