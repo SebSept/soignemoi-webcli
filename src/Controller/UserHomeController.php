@@ -20,7 +20,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserHomeController extends AbstractController
 {
     #[Route('/sejours', name: 'app_patient_home')]
-    #[IsGranted('ROLE_PATIENT')]
+    #[IsGranted('ROLE_PATIENT')] // @todo prefixer et def secu dans yml
     public function index(SoigneMoiApiService $apiService): Response
     {
         return $this->render('user_home/index.html.twig', [

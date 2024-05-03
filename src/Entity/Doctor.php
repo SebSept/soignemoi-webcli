@@ -11,14 +11,11 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-class MedicalOpinion
+readonly class Doctor
 {
     public function __construct(
         public ?int $id = null,
-        public string $title = '',
-        public string $description = '',
-        public ?Doctor $doctor = null,
-        public ?Patient $patient = null,
+        public string $fullName = ''
     ) {
     }
 }

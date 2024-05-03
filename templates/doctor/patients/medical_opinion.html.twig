@@ -5,6 +5,7 @@
 {% block body %}
 <div class="row">
     <h2>Avis médical</h2>
-    {{ form(form) }}
+    {{ form_start(form, {'action': path('app_doctor_patients_today_medical_opinion_submit')}) }}
+    {{ form_rest(form) }}
 </div>
 {% endblock %}

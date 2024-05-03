@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\HospitalStay;
+use App\Entity\MedicalOpinion;
 use Exception;
 use RuntimeException;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -153,6 +154,35 @@ class SoigneMoiApiService
             return $this->serializer->deserialize($response->getContent(), 'App\Entity\HospitalStay[]', 'json');
         } catch (Exception $exception) {
             throw new ApiException('Erreur récupération des séjours : '.$exception->getMessage(), $exception->getCode(), $exception);
+        }
+    }
+
+    public function postMedicalOpinion(MedicalOpinion $medicalOpinion): void
+    {
+        try {
+            // @todo utiliser une sérialization custom
+            $payload = [
+                'patient' => '/api/patients/'.$medicalOpinion->patient?->id,
+                'doctor' => '/api/doctors/'.$this->getUserId(),
+                'title' => $medicalOpinion->title,
+                'description' => $medicalOpinion->description,
+            ];
+
+            $response = $this->httpClient->request('POST', $this->apiUrl.'/api/medical_opinions', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer '.$this->getToken(),
+                ],
+                'json' => $payload,
+            ]);
+
+            if (201 !== $response->getStatusCode()) {
+                throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
+            }
+        } catch (Exception $exception) {
+            //            throw $exception;
+            throw new ApiException('Erreur '.__FUNCTION__.' : '.$exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 

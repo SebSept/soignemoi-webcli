@@ -11,10 +11,11 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-readonly class Patient
+class Patient
 {
     public function __construct(
-        public string $fullName
+        public ?int $id = null,
+        public string $fullName = '',
     ) {
     }
 }

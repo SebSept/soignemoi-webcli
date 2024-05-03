@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Doctor;
 use App\Entity\MedicalOpinion;
+use App\Entity\Patient;
 use App\Form\Type\MedicalOptionType;
 use App\Service\SoigneMoiApiService;
 use Exception;
@@ -22,34 +24,36 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class DoctorPatientsTodayController extends AbstractController
 {
-    #[Route('/doctor/patients/today', name: 'app_doctor_patients_today')]
-    public function index(
-        SoigneMoiApiService $apiService,
-    ): Response {
-        $hospitalStays = $apiService->getTodayPatientsForDoctor();
+    public function __construct(
+        private readonly SoigneMoiApiService $apiService)
+    {
+    }
 
+    #[Route('/doctor/patients/today', name: 'app_doctor_patients_today')]
+    public function index(): Response
+    {
         return $this->render('doctor/patients/today.html.twig', [
-            'stays' => $hospitalStays,
+            'stays' => $this->apiService->getTodayPatientsForDoctor(),
         ]);
     }
 
     #[Route(
-        path: '/doctor/patients/today/medical_opinion/{medicalOpinionId?}',
+        path: '/doctor/patients/today/medical_opinion/{patientId}/{medicalOpinionId?}',
         name: 'app_doctor_patients_today_medical_opinion',
         methods: ['GET']
     )]
-    public function medicalOpinionFormEdit(?int $medicalOpinionId = null): Response
+    public function medicalOpinionFormEdit(int $patientId, ?int $medicalOpinionId = null): Response
     {
         // @todo recuperer l'objet via l'api
         if (!is_null($medicalOpinionId)) {
             throw new Exception('implement me : medicalOpinion non null');
-            // @todo verif de cohérence avec l'utilisateur courant ?
-            // @todo patientId en param ?
+        // @todo verif de cohérence avec l'utilisateur courant ?
+        // @todo patientId en param ?
+        } else {
+            $medicalOpinion = new MedicalOpinion(null, '', '', new Doctor(null), new Patient($patientId)); // @todo récupérer l'id de l'url
         }
 
-        $medicalOpinion = new MedicalOpinion(7, 'titi', 'dec', 4, 5);
-
-        $form = $this->createForm(MedicalOptionType::class, $medicalOpinion);
+        $form = $this->createForm(MedicalOptionType::class, $medicalOpinion); // // @todo passer une option avec juste l'id patient ?
 
         return $this->render('doctor/patients/medical_opinion.html.twig', [
             'form' => $form,
@@ -65,11 +69,14 @@ class DoctorPatientsTodayController extends AbstractController
     {
         $form = $this->createForm(MedicalOptionType::class);
         $form->handleRequest($request);
+        /** @var MedicalOpinion $medicalOpinion */
+        $medicalOpinion = $form->getData();
+
+        $this->apiService->postMedicalOpinion($medicalOpinion);
 
         // pas de validation, on laisse l'api faire le travail
         // moins de dev, pas de soucis de cohérence, par contre c'est moins réactif
         // on pourra ajouter une validation minimal dont on est sur qu'elle restera valable dans le temps.
-        dump($form->getData());
         $this->addFlash(
             'success',
             'Your changes were saved!'

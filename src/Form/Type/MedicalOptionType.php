@@ -11,12 +11,16 @@ declare(strict_types=1);
 
 namespace App\Form\Type;
 
+use App\Entity\Doctor;
+use App\Entity\MedicalOpinion;
+use App\Entity\Patient;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MedicalOptionType extends AbstractType
 {
@@ -24,8 +28,8 @@ class MedicalOptionType extends AbstractType
     {
         $builder
             ->add('id', HiddenType::class)
-            ->add('doctorId', HiddenType::class)
-            ->add('patientId', HiddenType::class)
+            ->add('doctor', HiddenType::class, ['property_path' => 'doctor.id'])
+            ->add('patient', HiddenType::class, ['property_path' => 'patient.id'])
 
             ->add('title', TextType::class)
             ->add('description', TextareaType::class)
@@ -34,17 +38,11 @@ class MedicalOptionType extends AbstractType
         ;
     }
 
-    //    public function configureOptions(OptionsResolver $resolver): void
-    //    {
-    //        $resolver->setDefaults([
-    //            'data_class'      => MedicalOpinion::class,
-    //            // enable/disable CSRF protection for this form
-    //            'csrf_protection' => true,
-    //            // the name of the hidden HTML field that stores the token
-    //            'csrf_field_name' => '_token',
-    //            // an arbitrary string used to generate the value of the token
-    //            // using a different string for each form improves its security
-    //            'csrf_token_id'   => 'task_item',
-    //        ]);
-    //    }
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => MedicalOpinion::class,
+            'empty_data' => new MedicalOpinion(null, '', '', new Doctor(null), new Patient()),
+        ]);
+    }
 }
