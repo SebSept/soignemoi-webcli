@@ -25,6 +25,7 @@ security:
 
     access_control:
         - { path: ^/home/.* , roles: ROLE_PATIENT }
+        - { path: ^/doctor/.* , roles: ROLE_DOCTOR }
         # @todo a fixer
 
 when@test:
