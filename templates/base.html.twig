@@ -13,6 +13,18 @@
     </head>
     <body>
         <div class="container">
+            {% block flash %}
+                {# read and display all flash messages #}
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+{# https://getbootstrap.com/docs/4.0/components/alerts/ #}
+                        <div class="alert alert-{{ label }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endblock %}
+
             {% block body %}{% endblock %}
         </div>
     </body>

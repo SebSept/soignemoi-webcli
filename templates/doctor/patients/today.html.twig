@@ -35,8 +35,7 @@
                         </td>
                         <td>
                             {% if stay.todayMedicalOpinion is null %}
-                                {# <a href="{{ path('') }}" >Prescrire</a> #}
-                                <a href="#" >Donner un avis</a>
+                                 <a href="{{ path('app_doctor_patients_today_medical_opinion') }}" >Donner un avis</a>
                             {% else %}
                                 <a href="#">Modifier l'avis {{ stay.todayMedicalOpinion.id }}</a>
                             {% endif %}
