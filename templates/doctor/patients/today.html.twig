@@ -27,7 +27,7 @@
                         <td>{{ stay.reason }}</td>
                         <td>
                             {% if stay.todayPrescription is null %}
-{# <a href="{{ path('') }}" >Prescrire</a> #}
+                                {# <a href="{{ path('') }}" >Prescrire</a> #}
                                 <a href="#" >Prescrire</a>
                             {% else %}
                                 <a href="#">Modifier la prescription {{ stay.todayPrescription.id }}</a>
@@ -35,9 +35,10 @@
                         </td>
                         <td>
                             {% if stay.todayMedicalOpinion is null %}
-                                Pas d'avis medical
+                                {# <a href="{{ path('') }}" >Prescrire</a> #}
+                                <a href="#" >Donner un avis</a>
                             {% else %}
-                                {{ dump(stay.todayMedicalOpinion) }}
+                                <a href="#">Modifier l'avis {{ stay.todayMedicalOpinion.id }}</a>
                             {% endif %}
                         </td>
                     </tr>

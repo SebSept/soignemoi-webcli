@@ -13,4 +13,8 @@ namespace App\Entity;
 
 class MedicalOpinion
 {
+    public function __construct(
+        public int $id,
+    ) {
+    }
 }
