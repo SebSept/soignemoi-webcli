@@ -14,6 +14,7 @@ namespace App\Service;
 use App\Entity\HospitalStay;
 use Exception;
 use RuntimeException;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
@@ -33,13 +34,14 @@ class SoigneMoiApiService
 
     private string $token;
 
+    private int $userId;
+
     private readonly Serializer $serializer;
 
     public function __construct(
+        private readonly Security $security,
         private readonly HttpClientInterface $httpClient,
-        /** chaine sans 'api/' car on fait la demande de token au dessous.
-         */
-        private readonly string $apiUrl
+        private readonly string $apiUrl // chaine sans 'api/' car on fait la demande de token au dessous.
     ) {
         $this->serializer = new Serializer(
             [
@@ -48,6 +50,8 @@ class SoigneMoiApiService
                 new ArrayDenormalizer(),
             ],
             [new JsonEncoder()]);
+
+        // token et userId pas initialisés ici car Security n'a pas encore le User au moment de la construction du service.
     }
 
     public function authenticateUser(string $email, string $password): ApiResponse
@@ -97,24 +101,22 @@ class SoigneMoiApiService
             return new ApiResponse(false);
         }
 
-        return new ApiResponse(true, $token, $role, $id);
-    }
+        // $this->token = $token;
 
-    public function setToken(string $token): void
-    {
-        $this->token = $token;
+        return new ApiResponse(true, $token, $role, $id);
     }
 
     /**
      * @return HospitalStay[]
      */
-    public function getHospitalStays(int $patientId): array
+    public function getHospitalStays(?int $patientId = null): array
     {
+        $patientId ??= $this->getUserId();
         try {
             $response = $this->httpClient->request('GET', $this->apiUrl.'/api/patients/'.$patientId.'/hospital_stays', [
                 'headers' => [
                     'Accept' => 'application/json',
-                    'Authorization' => 'Bearer '.$this->token,
+                    'Authorization' => 'Bearer '.$this->getToken(),
                 ],
             ]);
 
@@ -132,13 +134,14 @@ class SoigneMoiApiService
     /**
      * @return HospitalStay[]
      */
-    public function getTodayPatientsForDoctor(int $doctorId): array
+    public function getTodayPatientsForDoctor(?int $doctorId = null): array
     {
+        $doctorId ??= $this->getUserId();
         try {
             $response = $this->httpClient->request('GET', $this->apiUrl.'/api/doctors/'.$doctorId.'/hospital_stays/today', [
                 'headers' => [
                     'Accept' => 'application/json',
-                    'Authorization' => 'Bearer '.$this->token,
+                    'Authorization' => 'Bearer '.$this->getToken(),
                 ],
             ]);
 
@@ -151,5 +154,33 @@ class SoigneMoiApiService
         } catch (Exception $exception) {
             throw new ApiException('Erreur récupération des séjours : '.$exception->getMessage(), $exception->getCode(), $exception);
         }
+    }
+
+    private function getToken(): string
+    {
+        if (!isset($this->token) || ('' === $this->token || '0' === $this->token)) {
+            $token = $this->security->getUser()?->getToken() ?? ''; /* @phpstan-ignore-line */ // @todo faire un stub phpstan pour éviter d'ignore la ligne
+            if (empty($token)) {
+                throw new Exception('No token. Is user loggedIn ?');
+            }
+
+            $this->token = $token;
+        }
+
+        return $this->token;
+    }
+
+    private function getUserId(): int
+    {
+        if (!isset($this->userId)) {
+            $userId = $this->security->getUser()?->getId() ?? null; /* @phpstan-ignore-line */ // @todo faire un stub phpstan pour éviter d'ignore la ligne
+            if (is_null($userId)) {
+                throw new Exception('No userId. Is user loggedIn ?');
+            }
+
+            $this->userId = $userId;
+        }
+
+        return $this->userId;
     }
 }
