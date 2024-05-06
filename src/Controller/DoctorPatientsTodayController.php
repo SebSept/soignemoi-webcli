@@ -33,7 +33,7 @@ class DoctorPatientsTodayController extends AbstractController
     public function index(): Response
     {
         return $this->render('doctor/patients/today.html.twig', [
-            'stays' => $this->apiService->getTodayPatientsForDoctor(),
+            'stays' => $this->apiService->getTodayHospitalStaysForDoctor(),
         ]);
     }
 
