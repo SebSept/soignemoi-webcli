@@ -44,16 +44,14 @@ class DoctorPatientsTodayController extends AbstractController
     )]
     public function medicalOpinionFormEdit(int $patientId, ?int $medicalOpinionId = null): Response
     {
-        // @todo recuperer l'objet via l'api
         if (!is_null($medicalOpinionId)) {
-            throw new Exception('implement me : medicalOpinion non null');
-        // @todo verif de cohérence avec l'utilisateur courant ?
-        // @todo patientId en param ?
+            $medicalOpinion = $this->apiService->getMedicalOpinion($medicalOpinionId);
+        // @todo verif de cohérence avec l'utilisateur courant ? On a pas un test qui vérifie que le medecin peut récupérér les ids des ses propres opinions ?
         } else {
-            $medicalOpinion = new MedicalOpinion(null, '', '', new Doctor(null), new Patient($patientId)); // @todo récupérer l'id de l'url
+            $medicalOpinion = new MedicalOpinion(null, '', '', new Doctor(null), new Patient($patientId)); // @todo faire plutot une option dans MedicalType
         }
 
-        $form = $this->createForm(MedicalOptionType::class, $medicalOpinion); // // @todo passer une option avec juste l'id patient ?
+        $form = $this->createForm(MedicalOptionType::class, $medicalOpinion);
 
         return $this->render('doctor/patients/medical_opinion.html.twig', [
             'form' => $form,
@@ -67,25 +65,27 @@ class DoctorPatientsTodayController extends AbstractController
     )]
     public function medicalOpinionFormSubmit(Request $request): Response
     {
-        $form = $this->createForm(MedicalOptionType::class);
-        $form->handleRequest($request);
-        /** @var MedicalOpinion $medicalOpinion */
-        $medicalOpinion = $form->getData();
+        try {
+            $form = $this->createForm(MedicalOptionType::class);
+            $form->handleRequest($request);
+            /** @var MedicalOpinion $medicalOpinion */
+            $medicalOpinion = $form->getData();
 
-        $this->apiService->postMedicalOpinion($medicalOpinion);
+            $this->apiService->postMedicalOpinion($medicalOpinion);
 
-        // pas de validation, on laisse l'api faire le travail
-        // moins de dev, pas de soucis de cohérence, par contre c'est moins réactif
-        // on pourra ajouter une validation minimal dont on est sur qu'elle restera valable dans le temps.
-        $this->addFlash(
-            'success',
-            'Your changes were saved!'
-        );
-        $this->addFlash(
-            'danger',
-            'oops'
-        );
+            $this->addFlash(
+                'success',
+                'Modifications enregistrées.'
+            );
 
-        return $this->redirectToRoute('app_doctor_patients_today_medical_opinion');
+            return $this->redirectToRoute('app_doctor_patients_today');
+        } catch (Exception $exception) {
+            $this->addFlash(
+                'danger',
+                "une erreur c'est produite. ".$exception->getMessage()
+            );
+
+            return $this->redirectToRoute('app_doctor_patients_today');
+        }
     }
 }

@@ -33,6 +33,8 @@ class SoigneMoiApiService
 
     public const ALLOWED_ROLES_WITHOUT_ID = ['ROLE_SECRETARY', 'ROLE_ADMIN'];
 
+    private const API_MEDICAL_OPINIONS_IRI = '/api/medical_opinions/%d';
+
     private string $token;
 
     private int $userId;
@@ -160,30 +162,59 @@ class SoigneMoiApiService
     public function postMedicalOpinion(MedicalOpinion $medicalOpinion): void
     {
         try {
-            // @todo utiliser une sérialization custom
-            $payload = [
-                'patient' => '/api/patients/'.$medicalOpinion->patient?->id,
-                'doctor' => '/api/doctors/'.$this->getUserId(),
-                'title' => $medicalOpinion->title,
-                'description' => $medicalOpinion->description,
-            ];
+            if (isset($medicalOpinion->id)) {
+                $payload = [
+                    'title' => $medicalOpinion->title,
+                    'description' => $medicalOpinion->description,
+                ];
 
-            $response = $this->httpClient->request('POST', $this->apiUrl.'/api/medical_opinions', [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer '.$this->getToken(),
-                ],
-                'json' => $payload,
-            ]);
+                $response = $this->httpClient->request('PATCH', $this->apiUrl.'/api/medical_opinions/'.$medicalOpinion->id, [
+                    'headers' => [
+                        'Content-Type' => 'application/merge-patch+json',
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer '.$this->getToken(),
+                    ],
+                    'json' => $payload,
+                ]);
 
-            if (201 !== $response->getStatusCode()) {
-                throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
+                if (200 !== $response->getStatusCode()) {
+                    throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
+                }
+            } else {
+                // @todo utiliser une sérialization custom
+                // @todo factoriser
+                $payload = [
+                    'patient' => '/api/patients/'.$medicalOpinion->patient?->id,
+                    'doctor' => '/api/doctors/'.$this->getUserId(),
+                    'title' => $medicalOpinion->title,
+                    'description' => $medicalOpinion->description,
+                ];
+
+                $response = $this->httpClient->request('POST', $this->apiUrl.'/api/medical_opinions', [
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer '.$this->getToken(),
+                    ],
+                    'json' => $payload,
+                ]);
+
+                if (201 !== $response->getStatusCode()) {
+                    throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
+                }
             }
         } catch (Exception $exception) {
             //            throw $exception;
             throw new ApiException('Erreur '.__FUNCTION__.' : '.$exception->getMessage(), $exception->getCode(), $exception);
         }
+    }
+
+    public function getMedicalOpinion(int $medicalOpinionId): MedicalOpinion
+    {
+        return $this->getRequest(
+            sprintf(self::API_MEDICAL_OPINIONS_IRI, $medicalOpinionId),
+            MedicalOpinion::class
+        );
     }
 
     private function getToken(): string
@@ -212,5 +243,33 @@ class SoigneMoiApiService
         }
 
         return $this->userId;
+    }
+
+    /**
+     * @template T
+     *
+     * @param class-string<T> $type
+     *
+     * @return T
+     */
+    private function getRequest(string $url, string $type): mixed
+    {
+        try {
+            $response = $this->httpClient->request('GET', $this->apiUrl.$url, [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer '.$this->getToken(),
+                ],
+            ]);
+
+            // @todo exception custom si non autorisé (->reconnexion à faire)
+            if (200 !== $response->getStatusCode()) {
+                throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
+            }
+
+            return $this->serializer->deserialize($response->getContent(), $type, 'json');
+        } catch (Exception $exception) {
+            throw new ApiException('Erreur récupération des séjours : '.$exception->getMessage(), $exception->getCode(), $exception);
+        }
     }
 }
