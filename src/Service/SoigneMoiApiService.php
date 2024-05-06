@@ -269,15 +269,7 @@ class SoigneMoiApiService
                 ],
             ]);
 
-        if (403 === $response->getStatusCode()) {
-            // @todo a implementer
-            // https://symfony.com/doc/current/security/access_denied_handler.html
-            throw new AccessDeniedException('Droits insuffisants.');
-        }
-
-        if (200 !== $response->getStatusCode()) {
-            throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
-        }
+        $this->handleNonOkResponse($response);
 
         return $this->serializer->deserialize($response->getContent(), $type, 'json');
     }
@@ -313,17 +305,7 @@ class SoigneMoiApiService
             'json' => $data,
         ]);
 
-        // 400 - erreur de validation avec message - // @todo a traiter comme des erreurs système ?
-        if (400 === $response->getStatusCode()) {
-            $responseContent = $response->getContent(false); // false pour ne pas lever d'exception.
-            throw new ApiValidationException('Erreur de validation : '.json_decode($responseContent)->detail);
-        }
-
-        // @todo implémenter les erreurs 422
-
-        if (201 !== $response->getStatusCode()) {
-            throw new ApiException('Code réponse inatendu :'.$response->getStatusCode());
-        }
+        $this->handleNonOkResponse($response);
     }
 
     private function getPatientIri(?Patient $patient): string
@@ -366,9 +348,24 @@ class SoigneMoiApiService
         // erreur du validation Symfony
         if (422 === $statusCode) {
             //            dd($responseContent);
+            // @todo vérifier les contenus
             throw new ApiValidationException('Erreur de validation (2) : '.json_decode($responseContent, flags: JSON_THROW_ON_ERROR)->detail);
         }
 
-        throw new ApiException('Code réponse inatendu :'.$statusCode);
+        if (403 === $response->getStatusCode()) {
+            // @todo a implementer
+            // https://symfony.com/doc/current/security/access_denied_handler.html
+            throw new AccessDeniedException('Droits insuffisants.');
+        }
+
+        if (200 === $response->getStatusCode()) {
+            return;
+        }
+
+        if (201 === $response->getStatusCode()) {
+            return;
+        }
+
+        throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
     }
 }
