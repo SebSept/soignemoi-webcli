@@ -13,18 +13,22 @@ namespace App\Service;
 
 use App\Entity\HospitalStay;
 use App\Entity\MedicalOpinion;
+use App\Entity\Patient;
 use App\Entity\Prescription;
 use Exception;
+use JsonException;
 use RuntimeException;
+use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 /**
  * @see \App\Tests\Service\SoigneMoiApiServiceTest
@@ -35,19 +39,25 @@ class SoigneMoiApiService
 
     public const ALLOWED_ROLES_WITHOUT_ID = ['ROLE_SECRETARY', 'ROLE_ADMIN'];
 
-    private const API_MEDICAL_OPINIONS_PATCH_IRI = '/api/medical_opinions/%d';
+    private const API_MEDICAL_OPINIONS_GET_IRI = self::API_MEDICAL_OPINIONS_PATCH_IRI;
 
     private const API_MEDICAL_OPINIONS_POST_IRI = '/api/medical_opinions/';
 
-    private const API_MEDICAL_OPINIONS_GET_IRI = self::API_MEDICAL_OPINIONS_PATCH_IRI;
+    private const API_MEDICAL_OPINIONS_PATCH_IRI = '/api/medical_opinions/%d';
 
-    private const API_PRESCRIPTIONS_PATCH_IRI = '/api/prescriptions/%d';
+    private const API_PRESCRIPTIONS_GET_IRI = self::API_PRESCRIPTIONS_PATCH_IRI;
 
     private const API_PRESCRIPTIONS_POST_IRI = '/api/prescriptions';
+
+    private const API_PRESCRIPTIONS_PATCH_IRI = '/api/prescriptions/%d';
 
     private const API_PATIENTS_HOSPITAL_STAYS_GET_IRI = '/api/patients/%d/hospital_stays';
 
     private const API_DOCTORS_HOSPITAL_STAYS_GET_IRI = '/api/doctors/%d/hospital_stays/today';
+
+    private const API_PATIENTS_GET = '/api/patients/%d';
+
+    private const API_DOCTORS_GET = '/api/doctors/%d';
 
     private string $token;
 
@@ -165,8 +175,8 @@ class SoigneMoiApiService
             $this->postRequest(
                 self::API_MEDICAL_OPINIONS_POST_IRI,
                 [
-                    'patient' => '/api/patients/'.$medicalOpinion->patient?->id,
-                    'doctor' => '/api/doctors/'.$this->getUserId(),
+                    'patient' => $this->getPatientIri($medicalOpinion->patient),
+                    'doctor' => $this->getDoctorIriAsCurrentUser(),
                     'title' => $medicalOpinion->title,
                     'description' => $medicalOpinion->description,
                 ]);
@@ -185,7 +195,7 @@ class SoigneMoiApiService
     public function getPrescription(int $prescriptionId): Prescription
     {
         return $this->getRequest(
-            self::API_PRESCRIPTIONS_PATCH_IRI,
+            self::API_PRESCRIPTIONS_GET_IRI,
             $prescriptionId,
             Prescription::class
         );
@@ -198,13 +208,15 @@ class SoigneMoiApiService
                 self::API_PRESCRIPTIONS_PATCH_IRI,
                 $prescription->id,
                 [
-                    'prescriptionItems' => $prescription->prescriptionItems,
+                    'items' => $prescription->items,
                 ]);
         } else {
             $this->postRequest(
                 self::API_PRESCRIPTIONS_POST_IRI,
                 [
-                    'prescriptionItems' => $prescription->prescriptionItems,
+                    'doctor' => $this->getDoctorIriAsCurrentUser(),
+                    'patient' => $this->getPatientIri($prescription->patient),
+                    'items' => $prescription->items,
                 ]);
         }
     }
@@ -247,26 +259,27 @@ class SoigneMoiApiService
      */
     private function getRequest(string $url, int $id, string $type): mixed
     {
-        try {
-            $response = $this->httpClient->request(
-                'GET',
-                $this->apiUrl.sprintf($url, $id),
-                [
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Authorization' => 'Bearer '.$this->getToken(),
-                    ],
-                ]);
+        $response = $this->httpClient->request(
+            'GET',
+            $this->apiUrl.sprintf($url, $id),
+            [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer '.$this->getToken(),
+                ],
+            ]);
 
-            // @todo exception custom si non autorisé (->reconnexion à faire)
-            if (200 !== $response->getStatusCode()) {
-                throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
-            }
-
-            return $this->serializer->deserialize($response->getContent(), $type, 'json');
-        } catch (Exception $exception) {
-            throw new ApiException('Erreur récupération des séjours : '.$exception->getMessage(), $exception->getCode(), $exception);
+        if (403 === $response->getStatusCode()) {
+            // @todo a implementer
+            // https://symfony.com/doc/current/security/access_denied_handler.html
+            throw new AccessDeniedException('Droits insuffisants.');
         }
+
+        if (200 !== $response->getStatusCode()) {
+            throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
+        }
+
+        return $this->serializer->deserialize($response->getContent(), $type, 'json');
     }
 
     /**
@@ -274,47 +287,88 @@ class SoigneMoiApiService
      */
     private function patchRequest(string $url, int $id, array $data): void
     {
-        try {
-            $response = $this->httpClient->request('PATCH', $this->apiUrl.sprintf($url, $id), [
-                'headers' => [
-                    'Content-Type' => 'application/merge-patch+json',
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer '.$this->getToken(),
-                ],
-                'json' => $data,
-            ]);
+        $response = $this->httpClient->request('PATCH', $this->apiUrl.sprintf($url, $id), [
+            'headers' => [
+                'Content-Type' => 'application/merge-patch+json',
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer '.$this->getToken(),
+            ],
+            'json' => $data,
+        ]);
 
-            if (200 !== $response->getStatusCode()) {
-                throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
-            }
-        } catch (Exception $exception) {
-            throw new ApiException('Erreur '.__FUNCTION__.' : '.$exception->getMessage(), $exception->getCode(), $exception);
-        }
+        $this->handleNonOkResponse($response);
     }
 
     /**
      * @param array<string, mixed> $data
-     *
-     * @throws ApiException
-     * @throws TransportExceptionInterface
      */
     private function postRequest(string $url, array $data): void
     {
-        try {
-            $response = $this->httpClient->request('POST', $this->apiUrl.$url, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer '.$this->getToken(),
-                ],
-                'json' => $data,
-            ]);
+        $response = $this->httpClient->request('POST', $this->apiUrl.$url, [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer '.$this->getToken(),
+            ],
+            'json' => $data,
+        ]);
 
-            if (201 !== $response->getStatusCode()) {
-                throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
-            }
-        } catch (Exception $exception) {
-            throw new ApiException('Erreur '.__FUNCTION__.' : '.$exception->getMessage(), $exception->getCode(), $exception);
+        // 400 - erreur de validation avec message - // @todo a traiter comme des erreurs système ?
+        if (400 === $response->getStatusCode()) {
+            $responseContent = $response->getContent(false); // false pour ne pas lever d'exception.
+            throw new ApiValidationException('Erreur de validation : '.json_decode($responseContent)->detail);
         }
+
+        // @todo implémenter les erreurs 422
+
+        if (201 !== $response->getStatusCode()) {
+            throw new ApiException('Code réponse inatendu :'.$response->getStatusCode());
+        }
+    }
+
+    private function getPatientIri(?Patient $patient): string
+    {
+        if (is_null($patient)) {
+            throw new Exception('Patient non défini');
+        }
+
+        return sprintf(self::API_PATIENTS_GET, $patient->id);
+    }
+
+    private function getDoctorIriAsCurrentUser(): string
+    {
+        return sprintf(self::API_DOCTORS_GET, $this->getUserId());
+    }
+
+    private function handleNonOkResponse(ResponseInterface $response): void
+    {
+        $statusCode = $response->getStatusCode();
+        $responseContent = $response->getContent(false); // false pour ne pas lever d'exception.
+        try {
+            $jsonResponseContent = json_decode($responseContent, flags: JSON_THROW_ON_ERROR);
+            if (is_scalar($jsonResponseContent)) {
+                $jsonResponseContent = new stdClass();
+            }
+        } catch (JsonException) {
+            $jsonResponseContent = new stdClass();
+        }
+
+        // inspiré de \Symfony\Component\HttpClient\Response\CommonResponseTrait::checkStatusCode
+        if ($statusCode < 300) {
+            return;
+        }
+
+        // 400 - erreur de validation avec message - // @todo a traiter comme des erreurs système ?
+        if (400 === $statusCode) {
+            throw new ApiValidationException('Erreur de validation : '.$jsonResponseContent->detail);
+        }
+
+        // erreur du validation Symfony
+        if (422 === $statusCode) {
+            //            dd($responseContent);
+            throw new ApiValidationException('Erreur de validation (2) : '.json_decode($responseContent, flags: JSON_THROW_ON_ERROR)->detail);
+        }
+
+        throw new ApiException('Code réponse inatendu :'.$statusCode);
     }
 }

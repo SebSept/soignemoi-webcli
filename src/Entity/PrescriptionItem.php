@@ -11,16 +11,12 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-class Prescription
+class PrescriptionItem
 {
-    /**
-     * @param PrescriptionItem[] $items
-     */
     public function __construct(
         public ?int $id = null,
-        public ?Doctor $doctor = null,
-        public ?Patient $patient = null,
-        public array $items = [],
+        public string $drug = '',
+        public string $dosage = '',
     ) {
     }
 }

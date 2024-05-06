@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Prescription{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <h2>Prescription</h2>
+        {{ form_start(form, {'action': path('app_doctor_patients_today_prescription_submit')}) }}
+        <button type="button" class="btn btn-primary add_item_link">Ajouter une prescription</button>
+        {{ form_rest(form) }}
+        {# {{ form_row(form.prescriptionItems.vars.prototype) }} #}
+    </div>
+
+    <script>
+        const myjs = function () {
+            document.querySelectorAll('.add_item_link').forEach(btn => {
+                btn.addEventListener("click", addFormToCollection);
+                // compteur déjà incrémenté du nombre d'éléments présents
+                document.querySelector('#prescription_items').dataset.index = document.querySelector('#prescription_items').children.length.toString();
+            });
+
+            function addFormToCollection(e) // e = evenement
+            {
+                let collectionHolder = document.querySelector('#prescription_items');
+
+                const item = document.createElement('li');
+                item.innerHTML = collectionHolder.dataset.prototype.replace(/__name__/g, collectionHolder.dataset.index);
+                collectionHolder.appendChild(item);
+                collectionHolder.dataset.index++;
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', myjs, false);
+    </script>
+{% endblock %}
+
+{# javascript pour le bouton "ajouter" #}
+    {% block javascripts %}
+        {{ parent() }}
+
+    {% endblock %}

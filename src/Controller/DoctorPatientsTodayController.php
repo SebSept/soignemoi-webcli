@@ -52,7 +52,7 @@ class DoctorPatientsTodayController extends AbstractController
             $medicalOpinion = $this->apiService->getMedicalOpinion($medicalOpinionId);
         // @todo verif de cohérence avec l'utilisateur courant ? On a pas un test qui vérifie que le medecin peut récupérér les ids des ses propres opinions ?
         } else {
-            $medicalOpinion = new MedicalOpinion(null, '', '', new Doctor(null), new Patient($patientId)); // @todo faire plutot une option dans MedicalType
+            $medicalOpinion = new MedicalOpinion(null, '', '', new Doctor(), new Patient($patientId)); // @todo faire plutot une option dans MedicalType
         }
 
         $form = $this->createForm(MedicalOpinionType::class, $medicalOpinion);
@@ -89,6 +89,63 @@ class DoctorPatientsTodayController extends AbstractController
                 "une erreur c'est produite. ".$exception->getMessage()
             );
 
+            return $this->redirectToRoute('app_doctor_patients_today');
+        }
+    }
+
+    #[Route(
+        path: '/doctor/patients/today/prescription/{patientId}/{prescriptionId?}',
+        name: 'app_doctor_patients_today_prescription',
+        methods: ['GET']
+    )]
+    public function prescriptionFormEdit(int $patientId, ?int $prescriptionId = null): Response
+    {
+        if (!is_null($prescriptionId)) {
+            $prescription = $this->apiService->getPrescription($prescriptionId);
+        } else {
+            $prescription = new Prescription(null, new Doctor(), new Patient($patientId),
+                [
+                    new PrescriptionItem(null, '', ''),
+                ]);
+        }
+
+        $form = $this->createForm(PrescriptionType::class, $prescription);
+
+        return $this->render('doctor/patients/prescription.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    #[Route(
+        path: '/doctor/patients/today/prescription',
+        name: 'app_doctor_patients_today_prescription_submit',
+        methods: ['POST']
+    )]
+    public function prescriptionFormSubmit(Request $request): Response
+    {
+        try {
+            $form = $this->createForm(PrescriptionType::class);
+            $form->handleRequest($request);
+            /** @var Prescription $prescription */
+            $prescription = $form->getData();
+
+            $this->apiService->postPrescription($prescription);
+
+            $this->addFlash(
+                'success',
+                'Modifications enregistrées.'
+            );
+        } catch (ApiValidationException $validationException) {
+            $this->addFlash(
+                'danger',
+                $validationException->getMessage()
+            );
+        } catch (Exception $exception) {
+            $this->addFlash(
+                'danger',
+                'Erreur interne. '.$exception->getMessage() // // @todo ne pas afficher en prod
+            );
+        } finally {
             return $this->redirectToRoute('app_doctor_patients_today');
         }
     }
