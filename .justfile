@@ -65,6 +65,12 @@ db-fixtures-load:
 composer script:
     {{composer}} {{script}}
 
+rector:
+    {{docker_php_exec}} vendor/bin/rector
+
+phpstan:
+    {{docker_php_exec}} vendor/bin/phpstan
+
 # Run command in Symfony console
 console command:
     {{console}} {{command}}
