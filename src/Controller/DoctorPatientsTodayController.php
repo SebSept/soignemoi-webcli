@@ -14,7 +14,11 @@ namespace App\Controller;
 use App\Entity\Doctor;
 use App\Entity\MedicalOpinion;
 use App\Entity\Patient;
-use App\Form\Type\MedicalOptionType;
+use App\Entity\Prescription;
+use App\Entity\PrescriptionItem;
+use App\Form\Type\MedicalOpinionType;
+use App\Form\Type\PrescriptionType;
+use App\Service\ApiValidationException;
 use App\Service\SoigneMoiApiService;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -51,7 +55,7 @@ class DoctorPatientsTodayController extends AbstractController
             $medicalOpinion = new MedicalOpinion(null, '', '', new Doctor(null), new Patient($patientId)); // @todo faire plutot une option dans MedicalType
         }
 
-        $form = $this->createForm(MedicalOptionType::class, $medicalOpinion);
+        $form = $this->createForm(MedicalOpinionType::class, $medicalOpinion);
 
         return $this->render('doctor/patients/medical_opinion.html.twig', [
             'form' => $form,
@@ -66,7 +70,7 @@ class DoctorPatientsTodayController extends AbstractController
     public function medicalOpinionFormSubmit(Request $request): Response
     {
         try {
-            $form = $this->createForm(MedicalOptionType::class);
+            $form = $this->createForm(MedicalOpinionType::class);
             $form->handleRequest($request);
             /** @var MedicalOpinion $medicalOpinion */
             $medicalOpinion = $form->getData();
