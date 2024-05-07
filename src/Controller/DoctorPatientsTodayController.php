@@ -47,14 +47,12 @@ class DoctorPatientsTodayController extends AbstractController
     )]
     public function medicalOpinionFormEdit(int $patientId, ?int $medicalOpinionId = null): Response
     {
+        $medicalOpinion = null;
         if (!is_null($medicalOpinionId)) {
             $medicalOpinion = $this->apiService->getMedicalOpinion($medicalOpinionId);
-        // @todo verif de cohérence avec l'utilisateur courant ? On a pas un test qui vérifie que le medecin peut récupérér les ids des ses propres opinions ?
-        } else {
-            $medicalOpinion = new MedicalOpinion(null, '', '', new Doctor(), new Patient($patientId)); // @todo faire plutot une option dans MedicalType
         }
 
-        $form = $this->createForm(MedicalOpinionType::class, $medicalOpinion);
+        $form = $this->createForm(MedicalOpinionType::class, $medicalOpinion, ['patientId' => $patientId]);
 
         return $this->render('doctor/patients/medical_opinion.html.twig', [
             'form' => $form->createView(),

@@ -29,7 +29,10 @@ class MedicalOpinionType extends AbstractType
         $builder
             ->add('id', HiddenType::class)
             ->add('doctor', HiddenType::class, ['property_path' => 'doctor.id'])
-            ->add('patient', HiddenType::class, ['property_path' => 'patient.id'])
+            ->add('patient', HiddenType::class, [
+                'property_path' => 'patient.id',
+                'data' => $options['patientId'],
+            ])
 
             ->add('title', TextType::class)
             ->add('description', TextareaType::class)
@@ -43,6 +46,9 @@ class MedicalOpinionType extends AbstractType
         $resolver->setDefaults([
             'data_class' => MedicalOpinion::class,
             'empty_data' => new MedicalOpinion(null, '', '', new Doctor(null), new Patient()),
+            'patientId' => 0,
         ]);
+
+        $resolver->setAllowedTypes('patientId', 'int');
     }
 }
