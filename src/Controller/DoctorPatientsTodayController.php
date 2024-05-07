@@ -15,7 +15,6 @@ use App\Entity\Doctor;
 use App\Entity\MedicalOpinion;
 use App\Entity\Patient;
 use App\Entity\Prescription;
-use App\Entity\PrescriptionItem;
 use App\Form\Type\MedicalOpinionType;
 use App\Form\Type\PrescriptionType;
 use App\Service\ApiValidationException;
@@ -58,7 +57,7 @@ class DoctorPatientsTodayController extends AbstractController
         $form = $this->createForm(MedicalOpinionType::class, $medicalOpinion);
 
         return $this->render('doctor/patients/medical_opinion.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -103,16 +102,13 @@ class DoctorPatientsTodayController extends AbstractController
         if (!is_null($prescriptionId)) {
             $prescription = $this->apiService->getPrescription($prescriptionId);
         } else {
-            $prescription = new Prescription(null, new Doctor(), new Patient($patientId),
-                [
-                    new PrescriptionItem(null, '', ''),
-                ]);
+            $prescription = new Prescription(null, new Doctor(), new Patient($patientId), []);
         }
 
         $form = $this->createForm(PrescriptionType::class, $prescription);
 
         return $this->render('doctor/patients/prescription.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
