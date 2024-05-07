@@ -134,10 +134,10 @@ class DoctorPatientsTodayController extends AbstractController
                 'danger',
                 $validationException->getMessage()
             );
-        } catch (Exception $exception) {
+        } catch (Exception) {
             $this->addFlash(
                 'danger',
-                'Erreur interne. '.$exception->getMessage() // // @todo ne pas afficher en prod
+                'Erreur interne.'
             );
         } finally {
             return $this->redirectToRoute('app_doctor_patients_today');
