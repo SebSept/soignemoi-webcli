@@ -224,7 +224,6 @@ class SoigneMoiApiService
     private function getToken(): string
     {
         if (!isset($this->token) || ('' === $this->token || '0' === $this->token)) {
-            /* @phpstan-ignore-next-line */ // @todo faire un stub phpstan pour éviter d'ignorer la ligne
             $token = $this->security->getUser()?->getToken() ?? '';
             if (empty($token)) {
                 throw new Exception('No token. Is user loggedIn ?');

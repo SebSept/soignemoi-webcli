@@ -1,0 +1,16 @@
+<?php
+
+namespace Symfony\Bundle\SecurityBundle;
+
+use App\Security\User;
+
+class Security
+{
+
+    /**
+     * @return ?User
+     */
+    public function getUser() {}
+
+    public function getToken(): string {}
+}
