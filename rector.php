@@ -40,7 +40,6 @@ return RectorConfig::configure()
         codingStyle: true,
         typeDeclarations: true,
         privatization: true,
-        //        naming: true, // veux renomer des champs des entités doctrine. @todo peut-être juste qlq règles a exclure
         instanceOf: true,
         earlyReturn: true,
         strictBooleans: true
