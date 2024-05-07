@@ -41,7 +41,7 @@ class SoigneMoiApiService
 
     private const API_MEDICAL_OPINIONS_GET_IRI = self::API_MEDICAL_OPINIONS_PATCH_IRI;
 
-    private const API_MEDICAL_OPINIONS_POST_IRI = '/api/medical_opinions/';
+    private const API_MEDICAL_OPINIONS_POST_IRI = '/api/medical_opinions';
 
     private const API_MEDICAL_OPINIONS_PATCH_IRI = '/api/medical_opinions/%d';
 
