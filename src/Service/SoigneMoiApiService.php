@@ -51,7 +51,7 @@ class SoigneMoiApiService
 
     private const API_PRESCRIPTIONS_PATCH_IRI = '/api/prescriptions/%d';
 
-    private const API_PATIENTS_HOSPITAL_STAYS_GET_IRI = '/api/patients/%d/hospital_stays';
+    private const API_PATIENTS_HOSPITAL_STAYS_GET_IRI = '/api/patients/hospital_stays';
 
     private const API_DOCTORS_HOSPITAL_STAYS_GET_IRI = '/api/doctors/%d/hospital_stays/today';
 
@@ -136,7 +136,7 @@ class SoigneMoiApiService
     /**
      * @return HospitalStay[]
      */
-    public function getHospitalStays(?int $patientId = null): array
+    public function getPatientHospitalStays(?int $patientId = null): array
     {
         $patientId ??= $this->getUserId();
 

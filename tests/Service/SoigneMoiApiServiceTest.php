@@ -138,7 +138,7 @@ class SoigneMoiApiServiceTest extends KernelTestCase
         $this->assertSame($id, $response->id);
     }
 
-    public function testGetHospitalStays(): void
+    public function testGetPatientHospitalStays(): void
     {
         $httpClient = new MockHttpClient();
         $mockResponse = new MockResponse(
@@ -148,7 +148,8 @@ class SoigneMoiApiServiceTest extends KernelTestCase
         $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
 
         $user = new User('nop@nop.com');
-        $user->setToken(123);
+        $user->setToken('123');
+        $user->setId(7);
 
         $mockedSecurity = $this->createMock(Security::class);
         $mockedSecurity->method('getUser')->willReturn($user);
@@ -159,7 +160,7 @@ class SoigneMoiApiServiceTest extends KernelTestCase
         /** @var SoigneMoiApiService $api */
         $api = static::getContainer()->get(SoigneMoiApiService::class);
 
-        $hospitalStays = $api->getHospitalStays(44);
+        $hospitalStays = $api->getPatientHospitalStays();
 
         $this->assertContainsOnlyInstancesOf(HospitalStay::class, $hospitalStays);
     }

@@ -24,7 +24,7 @@ class UserHomeController extends AbstractController
     public function index(SoigneMoiApiService $apiService): Response
     {
         return $this->render('user_home/index.html.twig', [
-            'sejours' => $apiService->getHospitalStays(),
+            'sejours' => $apiService->getPatientHospitalStays(),
         ]);
     }
 }
