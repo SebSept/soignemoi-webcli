@@ -13,7 +13,7 @@ class UserHomeTest extends WebTestCase
     {
         $this->browser()
             ->interceptRedirects()
-            ->visit('/sejours')
+            ->visit('/patient/sejours')
             ->assertRedirectedTo('/login');
     }
 }

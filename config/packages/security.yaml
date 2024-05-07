@@ -24,9 +24,8 @@ security:
                 target: app_patient_home
 
     access_control:
-        - { path: ^/home/.* , roles: ROLE_PATIENT }
+        - { path: ^/patient/.* , roles: ROLE_PATIENT }
         - { path: ^/doctor/.* , roles: ROLE_DOCTOR }
-        # @todo a fixer
 
 when@test:
     security:

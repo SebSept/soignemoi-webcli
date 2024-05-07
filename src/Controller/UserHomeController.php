@@ -15,12 +15,10 @@ use App\Service\SoigneMoiApiService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserHomeController extends AbstractController
 {
-    #[Route('/sejours', name: 'app_patient_home')]
-    #[IsGranted('ROLE_PATIENT')] // @todo prefixer et def secu dans yml
+    #[Route('/patient/sejours', name: 'app_patient_home')]
     public function index(SoigneMoiApiService $apiService): Response
     {
         return $this->render('user_home/index.html.twig', [

@@ -12,7 +12,7 @@ class LoginPageTest extends WebTestCase
     public const PATIENT_CREDENTIALS = [
         'userName' => 'patient@patient.com',
         'password' => 'hello',
-        'expectedUrl' => '/sejours',
+        'expectedUrl' => '/patient/sejours',
     ];
 
     public const DOCTOR_CREDENTIALS = [
