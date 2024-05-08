@@ -17,6 +17,7 @@ use App\Entity\Patient;
 use App\Entity\Prescription;
 use Exception;
 use JsonException;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -68,7 +69,8 @@ class SoigneMoiApiService
     public function __construct(
         private readonly Security $security,
         private readonly HttpClientInterface $httpClient,
-        private readonly string $apiUrl // chaine sans 'api/' car on fait la demande de token au dessous.
+        private readonly string $apiUrl, // chaine sans 'api/' car on fait la demande de token au dessous.
+        private readonly LoggerInterface $logger,
     ) {
         $this->serializer = new Serializer(
             [
@@ -99,7 +101,11 @@ class SoigneMoiApiService
                 ]);
 
             if (200 !== $response->getStatusCode()) {
-                // @todo a logger
+                $this->logger->critical(
+                    'Essait d\'authentification ratée.', [
+                        'responseCode' => $response->getStatusCode(),
+                        'responseContent' =>$response->getContent(),
+                    ]);
                 return new ApiResponse(ok: false);
             }
 
