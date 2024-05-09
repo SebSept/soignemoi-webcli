@@ -24,7 +24,7 @@ security:
                 target: app_patient_home
 
     access_control:
-        - { path: ^/.* }
+        - { path: ^/.*, roles: PUBLIC_ACCESS }
         - { path: ^/patient/.* , roles: ROLE_PATIENT }
         - { path: ^/doctor/.* , roles: ROLE_DOCTOR }
         - { path: ^/secretary/.* , roles: ROLE_SECRETARY }
