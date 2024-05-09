@@ -16,12 +16,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class UserHomeController extends AbstractController
+class PatientHomeController extends AbstractController
 {
     #[Route('/patient/sejours', name: 'app_patient_home')]
     public function index(SoigneMoiApiService $apiService): Response
     {
-        return $this->render('user_home/index.html.twig', [
+        return $this->render('patient/home.html.twig', [
             'sejours' => $apiService->getPatientHospitalStays(),
         ]);
     }
