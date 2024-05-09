@@ -60,6 +60,8 @@ class SoigneMoiApiService
 
     private const API_DOCTORS_GET = '/api/doctors/%d';
 
+    private const API_SECRETARY_HOSPITAL_STAYS_ENTRIES_TODAY = '/api/hospital_stays/today_entries';
+
     private string $token;
 
     private int $userId;
@@ -226,6 +228,18 @@ class SoigneMoiApiService
                     'items' => $prescription->items,
                 ]);
         }
+    }
+
+    /**
+     * @return HospitalStay[]
+     */
+    public function getEntriesToday(): array
+    {
+        /* @phpstan-ignore-next-line */
+        return $this->getRequest(
+            url: self::API_SECRETARY_HOSPITAL_STAYS_ENTRIES_TODAY,
+            type: HospitalStay::class.'[]', /* @phpstan-ignore-line */
+            id: 0);
     }
 
     private function getToken(): string

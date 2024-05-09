@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Entrées et sorties du jour{% endblock %}
+
+{% block body %}
+    <h1>Entrées et sorties du jour</h1>
+
+    <h2>Entrées</h2>
+    {% if entries is not empty %}
+        <table class="table table-striped">
+
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Spécialité</th>
+                <th>Statut</th>
+                <th>Dossier</th>
+            </tr>
+            </thead>
+            {% for stay in entries %}
+                <th>{{ stay.patient.fullName }}</th>
+                <th>{{ stay.medicalSpeciality }}Spécialité</th>
+                <th>Statut @todo</th>
+                <th>Dossier @todo</th>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    <h2>Sortie @todo</h2>
+{% endblock %}

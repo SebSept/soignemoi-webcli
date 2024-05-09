@@ -12,7 +12,7 @@ use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class SoigneMoiApiServiceTest extends KernelTestCase
+class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
 {
     
     public function testAuthenticationFailsIfUnAuthorized(): void

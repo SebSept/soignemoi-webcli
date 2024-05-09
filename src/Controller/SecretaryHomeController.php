@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Service\SoigneMoiApiService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,9 +19,11 @@ use Symfony\Component\Routing\Attribute\Route;
 class SecretaryHomeController extends AbstractController
 {
     #[Route('/secretary/', name: 'app_secretary_home')]
-    public function index(): Response
+    public function index(SoigneMoiApiService $api): Response
     {
-        return $this->render('secretary/index.html.twig', [
+        return $this->render('secretary/home.html.twig', [
+            'entries' => $api->getEntriesToday(),
+            'exits' => [], // $api->getExitsToday(),
         ]);
     }
 }

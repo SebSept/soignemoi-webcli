@@ -8,30 +8,7 @@ use Zenstruck\Browser\Test\HasBrowser;
 class LoginPageTest extends WebTestCase
 {
     use HasBrowser;
-
-    public const PATIENT_CREDENTIALS = [
-        'userName' => 'patient@patient.com',
-        'password' => 'hello',
-        'expectedUrl' => '/patient/sejours',
-    ];
-
-    public const DOCTOR_CREDENTIALS = [
-        'userName' => 'doctor@doctor.com',
-        'password' => 'hello',
-        'expectedUrl' => '/doctor/patients/today',
-    ];
-
-    public const SECRETARY_CREDENTIALS = [
-        'userName' => 'secretaire@secretaire.com',
-        'password' => 'hello',
-        'expectedUrl' => '/secretary/',
-    ];
-
-    public const ADMIN_CREDENTIALS = [
-        'userName' => 'admin@admin.com',
-        'password' => 'hello',
-        'expectedUrl' => '/admin/',
-    ];
+    use Credentials;
 
     public function testLoginAsPatientIsRedirectedToPatientHomePage(): void
     {
@@ -56,7 +33,7 @@ class LoginPageTest extends WebTestCase
 
     private function testLogin(string $userName, string $password, string $expectedUrl): void
     {
-        $this->markTestSkipped('tests pas fiables');
+//        $this->markTestSkipped('tests pas fiables');
         $browser = $this->browser()->visit('/login');
 
         // Act
@@ -71,10 +48,11 @@ class LoginPageTest extends WebTestCase
             ->fillField('inputPassword', $password)
             ->clickAndIntercept('submit');
 
+//        $this->debugBrowser($browser);
+
         // Assert
         $browser->assertRedirectedTo($expectedUrl)
-        ->assertSuccessful()
-        ;
+            ->assertSuccessful();
     }
 
 }
