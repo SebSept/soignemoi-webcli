@@ -13,9 +13,11 @@ namespace App\Entity;
 
 use DateTimeInterface;
 
-// #[ApiFilter(DateFilter::class, properties: ['startDate'])]
 readonly class HospitalStay
 {
+    /**
+     * @param \App\Entity\Prescription[] $prescriptions
+     */
     public function __construct(
         public int $id,
         public DateTimeInterface $startDate,
@@ -27,6 +29,7 @@ readonly class HospitalStay
         public Patient $patient,
         public ?Prescription $todayPrescription,
         public ?MedicalOpinion $todayMedicalOpinion,
+        public array $prescriptions = [],
     ) {
     }
 }

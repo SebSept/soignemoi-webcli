@@ -21,6 +21,7 @@ class Prescription
         public ?Doctor $doctor = null,
         public ?Patient $patient = null,
         public array $items = [],
+        public ?\DateTime $dateTime = null,
     ) {
     }
 }

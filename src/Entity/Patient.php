@@ -16,6 +16,8 @@ class Patient
     public function __construct(
         public ?int $id = null,
         public string $fullName = '',
+        public string $firstname = '',
+        public string $lastname = '',
     ) {
     }
 }

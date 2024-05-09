@@ -27,7 +27,7 @@ class HospitalStayDetailsController extends AbstractController
     public function index(int $hospitalStayId): Response
     {
         return $this->render('hospital_stay_details.html.twig', [
-            'hospitalStay' => $this->api->getHospitalStayDetails($hospitalStayId),
+            'stay' => $this->api->getHospitalStayDetails($hospitalStayId),
         ]);
     }
 }

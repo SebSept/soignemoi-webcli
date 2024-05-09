@@ -7,6 +7,49 @@
 
     <h2>Patient</h2>
 
+    <table class="table table-striped">
+        <tr>
+            <td>Nom</td>
+            <td>{{ stay.patient.lastname }}</td>
+        </tr>
+        <tr>
+            <td>Prénom</td>
+            <td>{{ stay.patient.firstname }}</td>
+        </tr>
+    </table>
+
     <h2>Séjour</h2>
+
+    <table class="table table-striped">
+        <tr>
+            <td>Date d'entrée prévue</td>
+            <td>{{ stay.startDate|date('Y-m-d') }}</td>
+        </tr>
+        <tr>
+            <td>Entrée</td>
+            <td>{{ stay.checkin|date('Y-m-d H:m') }}</td>
+        </tr>
+    </table>
+
+    <h3>Préscriptions du séjour</h3>
+    {% for prescription in stay.prescriptions %}
+        <h4>Prescription du {{ prescription.dateTime|date('Y-m-d') }}</h4>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Medicament</th>
+                <th>Posologie</th>
+            </tr>
+            </thead>
+            {% for item in prescription.items %}
+                <tr>
+                    <td>{{ item.drug }}</td>
+                    <td>{{ item.dosage }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endfor %}
+
+    <h3>Avis du séjour</h3>
 
 {% endblock %}
