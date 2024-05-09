@@ -21,7 +21,15 @@
                 <tr>
                     <td>{{ stay.patient.fullName }}</td>
                     <td>{{ stay.medicalSpeciality }}</td>
-                    <td>{% if stay.checkout %}faite{% else %}A faire{% endif %}</td>
+                    <td>{% if stay.checkin %}
+                            faite
+                        {% else %}
+                            <a
+                                    href="{{ path('app_entry_register', {"hospitalStayId": stay.id}) }}"
+                                    class="btn btn-outline-primary">
+                                Entrer
+                            </a>
+                        {% endif %}</td>
                     <td>
                         <a href="{{ path('app_hospital_stay_details', {'hospitalStayId': stay.id}) }}">dossier</a>
                     </td>
