@@ -362,13 +362,13 @@ class SoigneMoiApiService
             return;
         }
 
-        // 400 - erreur de validation avec message - // @todo a traiter comme des erreurs système ?
-        if (400 === $statusCode) {
-            throw new ApiValidationException('Erreur de validation : '.$jsonResponseContent->detail);
+        // 400 - erreur de validation avec message
+        if (Response::HTTP_BAD_REQUEST === $statusCode) {
+            throw new ApiValidationException('Erreur de validation : requete incorrecte'.$jsonResponseContent->detail);
         }
 
-        // erreur du validation Symfony
-        if (422 === $statusCode) {
+        // erreur du validation Symfony - 422
+        if (Response::HTTP_UNPROCESSABLE_ENTITY === $statusCode) {
             //            dd($responseContent);
             // @todo vérifier les contenus
             throw new ApiValidationException('Erreur de validation (2) : '.json_decode($responseContent, flags: JSON_THROW_ON_ERROR)->detail);
@@ -382,14 +382,6 @@ class SoigneMoiApiService
         // non authorisé (loggé)
         if (Response::HTTP_FORBIDDEN === $response->getStatusCode()) {
             throw new AccessDeniedException('Droits insuffisants.');
-        }
-
-        if (200 === $response->getStatusCode()) {
-            return;
-        }
-
-        if (201 === $response->getStatusCode()) {
-            return;
         }
 
         throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());

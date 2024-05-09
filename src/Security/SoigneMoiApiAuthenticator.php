@@ -134,6 +134,7 @@ class SoigneMoiApiAuthenticator extends AbstractLoginFormAuthenticator
         if ($this->security->getUser() instanceof UserInterface) {
             $this->security->logout(false);
         }
+
         $url = $this->getLoginUrl($request);
 
         return new RedirectResponse($url);
