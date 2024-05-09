@@ -104,8 +104,9 @@ class SoigneMoiApiService
                 $this->logger->critical(
                     'Essait d\'authentification ratée.', [
                         'responseCode' => $response->getStatusCode(),
-                        'responseContent' =>$response->getContent(),
+                        'responseContent' => $response->getContent(),
                     ]);
+
                 return new ApiResponse(ok: false);
             }
 
@@ -232,7 +233,7 @@ class SoigneMoiApiService
         if (!isset($this->token) || ('' === $this->token || '0' === $this->token)) {
             $token = $this->security->getUser()?->getToken() ?? '';
             if (empty($token)) {
-                throw new Exception('No token. Is user loggedIn ?');
+                throw new AccessDeniedException();
             }
 
             $this->token = $token;
@@ -246,7 +247,7 @@ class SoigneMoiApiService
         if (!isset($this->userId)) {
             $userId = $this->security->getUser()?->getId() ?? null;
             if (is_null($userId)) {
-                throw new Exception('No userId. Is user loggedIn ?');
+                throw new AccessDeniedException();
             }
 
             $this->userId = $userId;
