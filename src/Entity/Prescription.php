@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
+
 class Prescription
 {
     /**
@@ -21,7 +23,7 @@ class Prescription
         public ?Doctor $doctor = null,
         public ?Patient $patient = null,
         public array $items = [],
-        public ?\DateTime $dateTime = null,
+        public ?DateTime $dateTime = null,
     ) {
     }
 }

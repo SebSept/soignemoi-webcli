@@ -16,7 +16,7 @@ use DateTimeInterface;
 readonly class HospitalStay
 {
     /**
-     * @param \App\Entity\Prescription[] $prescriptions
+     * @param Prescription[] $prescriptions
      */
     public function __construct(
         public int $id,
