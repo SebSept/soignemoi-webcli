@@ -15,6 +15,7 @@ use App\Entity\HospitalStay;
 use App\Entity\MedicalOpinion;
 use App\Entity\Patient;
 use App\Entity\Prescription;
+use DateTime;
 use Exception;
 use JsonException;
 use Psr\Log\LoggerInterface;
@@ -65,6 +66,8 @@ class SoigneMoiApiService
     private const API_SECRETARY_HOSPITAL_STAYS_ENTRIES_TODAY = '/api/hospital_stays/today_entries';
 
     private const API_HOSPITAL_STAY_DETAILS = '/api/hospital_stays/%d';
+
+    private const API_HOSPITAL_STAYS_PATCH_IRI = self::API_HOSPITAL_STAY_DETAILS;
 
     private string $token;
 
@@ -249,6 +252,15 @@ class SoigneMoiApiService
     public function getHospitalStayDetails(int $hospitalStayId): HospitalStay
     {
         return $this->getRequest(self::API_HOSPITAL_STAY_DETAILS, $hospitalStayId, HospitalStay::class);
+    }
+
+    public function registerEntry(int $hospitalStayId): void
+    {
+        $this->patchRequest(
+            self::API_HOSPITAL_STAYS_PATCH_IRI,
+            $hospitalStayId,
+            ['checkin' => (new DateTime())->format('c')]
+        );
     }
 
     private function getToken(): string
