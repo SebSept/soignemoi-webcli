@@ -3,7 +3,7 @@
 namespace App\Tests\e2e;
 
 use App\Security\User;
-use Zenstruck\Browser;
+use Zenstruck\Browser\KernelBrowser;
 
 trait Credentials
 {
@@ -32,7 +32,7 @@ trait Credentials
         'expectedUrl' => '/admin/',
     ];
 
-    protected function secretaryBrowser(): Browser
+    protected function secretaryBrowser(): KernelBrowser
     {
         return $this->browser()
             ->visit('/login')
