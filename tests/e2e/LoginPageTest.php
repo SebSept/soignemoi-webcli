@@ -55,4 +55,9 @@ class LoginPageTest extends WebTestCase
             ->assertSuccessful();
     }
 
+    private function debugBrowser(\Zenstruck\Browser|\Zenstruck\Browser\KernelBrowser $browser)
+    {
+        dump($browser->profile()->getCollector('http_client')->getClients()['http_client']['traces'][0]['info']);
+    }
+
 }
