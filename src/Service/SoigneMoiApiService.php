@@ -64,6 +64,8 @@ class SoigneMoiApiService
 
     private const API_SECRETARY_HOSPITAL_STAYS_ENTRIES_TODAY = '/api/hospital_stays/today_entries';
 
+    private const API_HOSPITAL_STAY_DETAILS = '/api/hospital_stays/%d';
+
     private string $token;
 
     private int $userId;
@@ -242,6 +244,11 @@ class SoigneMoiApiService
             url: self::API_SECRETARY_HOSPITAL_STAYS_ENTRIES_TODAY,
             type: HospitalStay::class.'[]', /* @phpstan-ignore-line */
             id: 0);
+    }
+
+    public function getHospitalStayDetails(int $hospitalStayId): HospitalStay
+    {
+        return $this->getRequest(self::API_HOSPITAL_STAY_DETAILS, $hospitalStayId, HospitalStay::class);
     }
 
     private function getToken(): string
