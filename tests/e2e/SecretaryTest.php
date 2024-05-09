@@ -20,7 +20,7 @@ class SecretaryTest extends WebTestCase
     public function testViewPatientFile(): void
     {
         $this->secretaryBrowser()
-            ->visit('/hospital_stay/details/1295')
+            ->visit('/hospital_stay/details/278')
             ->assertSuccessful()
             ->assertSee('Dossier du séjour')
         ;
