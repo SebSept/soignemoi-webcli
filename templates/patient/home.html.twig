@@ -4,31 +4,35 @@
 
 {% block body %}
 
-    <div class="example-wrapper">
-        <h1>Mes séjours</h1>
+    <h1>Mes séjours</h1>
+
+    <div class="row">
 
         {% if sejours is not empty %}
-            <table>
-                <thead>
-                <tr>
-                    <th>Date d'arrivée</th>
-                    <th>Date de sortie</th>
-                    <th>Motif</th>
-                    <th>Spécialité</th>
-{# <th>Medecin</th> #}
-                </tr>
-                </thead>
-                {% for sejour in sejours %}
-                    <tr>
-                    <td>{{ sejour.startDate|date('d/m/Y') }}</td>
-                    <td>{{ sejour.endDate|date('d/m/Y') }}</td>
-                    <td title="{{ sejour.reason }}">{{ sejour.reason|u.truncate(50, '...') }}</td>
-                    <td>{{ sejour.medicalSpeciality }}</td>
-{# <td>{{ sejour.doctorName }}</td> #}
-                        </tr>
-                {% endfor %}
-            </table>
+            <div class="col">
 
+                <table class="table table-striped">
+
+                    <thead>
+                    <tr>
+                        <th>Date d'arrivée</th>
+                        <th>Date de sortie</th>
+                        <th>Motif</th>
+                        <th>Spécialité</th>
+                        {# <th>Medecin</th> #}
+                    </tr>
+                    </thead>
+                    {% for sejour in sejours %}
+                        <tr>
+                            <td>{{ sejour.startDate|date('d/m/Y') }}</td>
+                            <td>{{ sejour.endDate|date('d/m/Y') }}</td>
+                            <td title="{{ sejour.reason }}">{{ sejour.reason|u.truncate(50, '...') }}</td>
+                            <td>{{ sejour.medicalSpeciality }}</td>
+                            {# <td>{{ sejour.doctorName }}</td> #}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
         {% else %}
             <p>Pas de séjours</p>
         {% endif %}
