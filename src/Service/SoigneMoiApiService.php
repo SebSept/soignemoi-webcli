@@ -21,8 +21,10 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -372,9 +374,13 @@ class SoigneMoiApiService
             throw new ApiValidationException('Erreur de validation (2) : '.json_decode($responseContent, flags: JSON_THROW_ON_ERROR)->detail);
         }
 
-        if (403 === $response->getStatusCode()) {
-            // @todo a implementer
-            // https://symfony.com/doc/current/security/access_denied_handler.html
+        // non loggé - 401
+        if (Response::HTTP_UNAUTHORIZED === $response->getStatusCode()) {
+            throw new BadCredentialsException();
+        }
+
+        // non authorisé (loggé)
+        if (Response::HTTP_FORBIDDEN === $response->getStatusCode()) {
             throw new AccessDeniedException('Droits insuffisants.');
         }
 

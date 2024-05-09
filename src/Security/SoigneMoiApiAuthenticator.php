@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\Service\SoigneMoiApiService;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,7 +39,8 @@ class SoigneMoiApiAuthenticator extends AbstractLoginFormAuthenticator
 
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly SoigneMoiApiService $api
+        private readonly SoigneMoiApiService $api,
+        private Security $security,
     ) {
     }
 
@@ -119,5 +121,21 @@ class SoigneMoiApiAuthenticator extends AbstractLoginFormAuthenticator
     protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+    }
+
+    /**
+     * Lancement login.
+     *
+     * Méthode de AuthenticationEntryPointInterface
+     * utilisée quand on a emis une exception AuthenticationException
+     */
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
+    {
+        if ($this->security->getUser() instanceof UserInterface) {
+            $this->security->logout(false);
+        }
+        $url = $this->getLoginUrl($request);
+
+        return new RedirectResponse($url);
     }
 }
