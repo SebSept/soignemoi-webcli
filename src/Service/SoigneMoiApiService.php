@@ -379,9 +379,9 @@ class SoigneMoiApiService
             throw new BadCredentialsException();
         }
 
-        // non authorisé (loggé)
+        // non authorisé (loggé) - 403
         if (Response::HTTP_FORBIDDEN === $response->getStatusCode()) {
-            throw new AccessDeniedException('Droits insuffisants.');
+            throw new AccessDeniedException('Accès interdit.');
         }
 
         throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
