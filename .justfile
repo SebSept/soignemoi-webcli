@@ -57,10 +57,6 @@ db-create-test:
 db-fixtures-make entity:
     {{console}} make:fixtures {{entity}}Fixtures
 
-# Insertion des fixtures en base de données
-db-fixtures-load:
-    {{console}} doctrine:fixture:load --no-interaction
-
 # Lancement scripts d'outil de qualité via composer
 composer script:
     {{composer}} {{script}}
