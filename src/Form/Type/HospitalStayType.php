@@ -39,8 +39,6 @@ class HospitalStayType extends AbstractType
             'choices' => $options['doctors'],
             'choice_label' => 'fullName',
             'choice_value' => 'id',
-            //            'data_class' => Doctor::class,
-            //            'property_path' => 'doctor.id',
         ]);
 
         $builder->add('submit', SubmitType::class, ['label' => 'Envoyer']);

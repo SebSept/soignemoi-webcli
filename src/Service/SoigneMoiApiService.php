@@ -307,7 +307,7 @@ class SoigneMoiApiService
         // https://github.com/symplify/phpstan-rules/blob/main/docs/rules_overview.md#checktypehintcallertyperule
         $data = (array) $hospitalStay;
 
-        $data['patient'] = $this->getPatientIri($data['patient']);
+        $data['patient'] = $this->getPatientIriAsCurrentUser();
         $data['doctor'] = $this->getDoctorIri($data['doctor']);
         $data['startDate'] = $this->formatDate($data['startDate']);
         $data['endDate'] = $this->formatDate($data['endDate']);
@@ -425,6 +425,11 @@ class SoigneMoiApiService
     private function getDoctorIriAsCurrentUser(): string
     {
         return sprintf(self::API_DOCTORS_GET, $this->getUserId());
+    }
+
+    private function getPatientIriAsCurrentUser(): string
+    {
+        return sprintf(self::API_PATIENTS_GET, $this->getUserId());
     }
 
     private function formatDate(?DateTimeInterface $dateTime): string

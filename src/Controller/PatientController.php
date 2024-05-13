@@ -28,6 +28,7 @@ class PatientController extends AbstractController
         ]);
     }
 
+    // @todo on peut se passer de ce paramètre et prend le user en cours
     #[Route(
         path: '/patient/hospital_stay_form/{patientId}',
         name: 'app_patient_hospital_stay_edit',
