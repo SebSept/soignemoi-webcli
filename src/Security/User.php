@@ -62,6 +62,18 @@ class User implements UserInterface
     }
 
     /**
+     * role sans ROLE_ en minuscule.
+     */
+    public function getRole(): string
+    {
+        if (!isset($this->getRoles()[0])) {
+            return '';
+        }
+
+        return strtolower(str_replace('ROLE_', '', $this->getRoles()[0]));
+    }
+
+    /**
      * @param string[] $roles
      */
     public function setRoles(array $roles): static
