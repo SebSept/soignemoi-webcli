@@ -473,7 +473,7 @@ class SoigneMoiApiService
 
         // non authorisé (loggé) - 403
         if (Response::HTTP_FORBIDDEN === $response->getStatusCode()) {
-            throw new AccessDeniedException('Accès interdit.');
+            throw new AccessDeniedException('Accès api interdit.');
         }
 
         throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
