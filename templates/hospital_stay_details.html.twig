@@ -32,24 +32,45 @@
     </table>
 
     <h3>Préscriptions du séjour</h3>
-    {% for prescription in stay.prescriptions %}
-        <h4>Prescription du {{ prescription.dateTime|date('Y-m-d') }}</h4>
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Medicament</th>
-                <th>Posologie</th>
-            </tr>
-            </thead>
-            {% for item in prescription.items %}
+    {% if stay.prescriptions is not empty %}
+        {% for prescription in stay.prescriptions %}
+            <h4>Prescription du {{ prescription.dateTime|date('Y-m-d') }}</h4>
+            <table class="table table-striped">
+                <thead>
                 <tr>
-                    <td>{{ item.drug }}</td>
-                    <td>{{ item.dosage }}</td>
+                    <th>Medicament</th>
+                    <th>Posologie</th>
                 </tr>
-            {% endfor %}
-        </table>
-    {% endfor %}
+                </thead>
+                {% for item in prescription.items %}
+                    <tr>
+                        <td>{{ item.drug }}</td>
+                        <td>{{ item.dosage }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
+    {% else %}
+        <p>Pas de prescription</p>
+    {% endif %}
 
     <h3>Avis du séjour</h3>
+    {% if stay.medicalOpinions is not empty %}
+        {% for medicalOpinion in stay.medicalOpinions %}
+            <h4>avis du {{ medicalOpinion.dateTime|date('Y-m-d') }}</h4>
+            <table class="table table-striped">
+                <tr>
+                    <td>Titre</td>
+                    <td>{{ medicalOpinion.title }}</td>
+                </tr>
+                <tr>
+                    <td>Contenu</td>
+                    <td>{{ medicalOpinion.description }}</td>
+                </tr>
+            </table>
+        {% endfor %}
+    {% else %}
+        <p>Pas d'avis médical</p>
+    {% endif %}
 
 {% endblock %}

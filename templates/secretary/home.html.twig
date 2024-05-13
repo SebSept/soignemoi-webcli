@@ -38,5 +38,36 @@
         </table>
     {% endif %}
 
-    <h2>Sortie @todo</h2>
+    <h2>Sorties</h2>
+    {% if exits is not empty %}
+        <table class="table table-striped">
+
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Spécialité</th>
+                <th>Statut</th>
+                <th>Dossier</th>
+            </tr>
+            </thead>
+            {% for stay in exits %}
+                <tr>
+                    <td>{{ stay.patient.fullName }}</td>
+                    <td>{{ stay.medicalSpeciality }}</td>
+                    <td>{% if stay.checkout %}
+                            faite
+                        {% else %}
+                            <a
+                                    href="{{ path('app_hospital_stay_checkout', {"hospitalStayId": stay.id}) }}"
+                                    class="btn btn-outline-primary">
+                                Sortir - {{ path('app_hospital_stay_checkout', {"hospitalStayId": stay.id}) }}
+                            </a>
+                        {% endif %}</td>
+                    <td>
+                        <a href="{{ path('app_hospital_stay_details', {'hospitalStayId': stay.id}) }}">dossier</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
 {% endblock %}

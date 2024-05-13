@@ -29,7 +29,7 @@ class SecretaryHomeController extends AbstractController
     {
         return $this->render('secretary/home.html.twig', [
             'entries' => $this->api->getEntriesToday(),
-            'exits' => [], // $api->getExitsToday(),
+            'exits' => $this->api->getExitsToday(),
         ]);
     }
 

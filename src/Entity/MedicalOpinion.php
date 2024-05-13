@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
+
 class MedicalOpinion
 {
     public function __construct(
@@ -19,6 +21,7 @@ class MedicalOpinion
         public string $description = '',
         public ?Doctor $doctor = null,
         public ?Patient $patient = null,
+        public ?DateTime $dateTime = null,
     ) {
     }
 }

@@ -16,7 +16,8 @@ use DateTimeInterface;
 readonly class HospitalStay
 {
     /**
-     * @param Prescription[] $prescriptions
+     * @param Prescription[]   $prescriptions
+     * @param MedicalOpinion[] $medicalOpinions
      */
     public function __construct(
         public int $id,
@@ -30,6 +31,7 @@ readonly class HospitalStay
         public ?Prescription $todayPrescription,
         public ?MedicalOpinion $todayMedicalOpinion,
         public array $prescriptions = [],
+        public array $medicalOpinions = [],
     ) {
     }
 }
