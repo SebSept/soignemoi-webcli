@@ -11,32 +11,25 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\SoigneMoiApiService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class SecretaryHomeController extends AbstractController
 {
-    public function __construct(
-        private readonly SoigneMoiApiService $api)
-    {
-    }
-
     #[Route('/secretary/', name: 'app_secretary_home')]
     public function index(): Response
     {
         return $this->render('secretary/home.html.twig', [
-            'entries' => $this->api->getEntriesToday(),
-            'exits' => $this->api->getExitsToday(),
+            'entries' => $this->apiService->getEntriesToday(),
+            'exits' => $this->apiService->getExitsToday(),
         ]);
     }
 
     #[Route('/secretary/checkin/{hospitalStayId}', name: 'app_hospital_stay_checkin')]
     public function checkinEntry(int $hospitalStayId): RedirectResponse
     {
-        $this->api->checkinEntry($hospitalStayId);
+        $this->apiService->checkinEntry($hospitalStayId);
         $this->addFlash('success', 'Entrée enregistrée.');
 
         return $this->redirectToRoute('app_secretary_home');
@@ -45,7 +38,7 @@ class SecretaryHomeController extends AbstractController
     #[Route('/secretary/checkout/{hospitalStayId}', name: 'app_hospital_stay_checkout')]
     public function checkoutEntry(int $hospitalStayId): RedirectResponse
     {
-        $this->api->checkoutEntry($hospitalStayId);
+        $this->apiService->checkoutEntry($hospitalStayId);
         $this->addFlash('success', 'Sortie enregistrée.');
 
         return $this->redirectToRoute('app_secretary_home');

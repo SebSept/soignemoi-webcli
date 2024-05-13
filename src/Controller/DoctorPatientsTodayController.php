@@ -18,20 +18,13 @@ use App\Entity\Prescription;
 use App\Form\Type\MedicalOpinionType;
 use App\Form\Type\PrescriptionType;
 use App\Service\ApiValidationException;
-use App\Service\SoigneMoiApiService;
 use Exception;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class DoctorPatientsTodayController extends AbstractController
 {
-    public function __construct(
-        private readonly SoigneMoiApiService $apiService)
-    {
-    }
-
     #[Route('/doctor/patients/today', name: 'app_doctor_patients_today')]
     public function index(): Response
     {
