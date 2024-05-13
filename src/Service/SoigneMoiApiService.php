@@ -65,6 +65,8 @@ class SoigneMoiApiService
 
     private const API_SECRETARY_HOSPITAL_STAYS_ENTRIES_TODAY = '/api/hospital_stays/today_entries';
 
+    private const API_SECRETARY_HOSPITAL_STAYS_EXITS_TODAY = '/api/hospital_stays/today_exits';
+
     private const API_HOSPITAL_STAY_DETAILS = '/api/hospital_stays/%d';
 
     private const API_HOSPITAL_STAYS_PATCH_IRI = self::API_HOSPITAL_STAY_DETAILS;
@@ -249,6 +251,18 @@ class SoigneMoiApiService
             id: 0);
     }
 
+    /**
+     * @return HospitalStay[]
+     */
+    public function getExitsToday(): array
+    {
+        /* @phpstan-ignore-next-line */
+        return $this->getRequest(
+            url: self::API_SECRETARY_HOSPITAL_STAYS_EXITS_TODAY,
+            type: HospitalStay::class.'[]', /* @phpstan-ignore-line */
+            id: 0);
+    }
+
     public function getHospitalStayDetails(int $hospitalStayId): HospitalStay
     {
         return $this->getRequest(self::API_HOSPITAL_STAY_DETAILS, $hospitalStayId, HospitalStay::class);
@@ -260,6 +274,15 @@ class SoigneMoiApiService
             self::API_HOSPITAL_STAYS_PATCH_IRI,
             $hospitalStayId,
             ['checkin' => (new DateTime())->format('c')]
+        );
+    }
+
+    public function checkoutEntry(int $hospitalStayId): void
+    {
+        $this->patchRequest(
+            self::API_HOSPITAL_STAYS_PATCH_IRI,
+            $hospitalStayId,
+            ['checkout' => (new DateTime())->format('c')]
         );
     }
 
