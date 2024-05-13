@@ -33,10 +33,10 @@ class SecretaryHomeController extends AbstractController
         ]);
     }
 
-    #[Route('/secretary/register/{hospitalStayId}', name: 'app_entry_register')]
-    public function registerEntry(int $hospitalStayId): RedirectResponse
+    #[Route('/secretary/checkin/{hospitalStayId}', name: 'app_hospital_stay_checkin')]
+    public function checkinEntry(int $hospitalStayId): RedirectResponse
     {
-        $this->api->registerEntry($hospitalStayId);
+        $this->api->checkinEntry($hospitalStayId);
         $this->addFlash('success', 'Entrée enregistrée.');
 
         return $this->redirectToRoute('app_secretary_home');

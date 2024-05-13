@@ -254,7 +254,7 @@ class SoigneMoiApiService
         return $this->getRequest(self::API_HOSPITAL_STAY_DETAILS, $hospitalStayId, HospitalStay::class);
     }
 
-    public function registerEntry(int $hospitalStayId): void
+    public function checkinEntry(int $hospitalStayId): void
     {
         $this->patchRequest(
             self::API_HOSPITAL_STAYS_PATCH_IRI,
