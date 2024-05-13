@@ -29,6 +29,14 @@
             <td>Entrée</td>
             <td>{{ stay.checkin|date('Y-m-d H:m') }}</td>
         </tr>
+        <tr>
+            <td>Motif</td>
+            <td>{{ stay.reason }}</td>
+        </tr>
+        <tr>
+            <td>Spécialité</td>
+            <td>{{ stay.medicalSpeciality }}</td>
+        </tr>
     </table>
 
     <h3>Préscriptions du séjour</h3>
