@@ -11,11 +11,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Doctor;
 use App\Entity\HospitalStay;
 use App\Entity\MedicalOpinion;
 use App\Entity\Patient;
 use App\Entity\Prescription;
 use DateTime;
+use DateTimeInterface;
 use Exception;
 use JsonException;
 use Psr\Log\LoggerInterface;
@@ -63,6 +65,8 @@ class SoigneMoiApiService
 
     private const API_DOCTORS_GET = '/api/doctors/%d';
 
+    private const API_DOCTORS_GET_LIST_IRI = '/api/doctors';
+
     private const API_SECRETARY_HOSPITAL_STAYS_ENTRIES_TODAY = '/api/hospital_stays/today_entries';
 
     private const API_SECRETARY_HOSPITAL_STAYS_EXITS_TODAY = '/api/hospital_stays/today_exits';
@@ -70,6 +74,8 @@ class SoigneMoiApiService
     private const API_HOSPITAL_STAY_DETAILS = '/api/hospital_stays/%d';
 
     private const API_HOSPITAL_STAYS_PATCH_IRI = self::API_HOSPITAL_STAY_DETAILS;
+
+    private const API_HOSPITAL_STAYS_POST_IRI = '/api/hospital_stays';
 
     private string $token;
 
@@ -286,6 +292,32 @@ class SoigneMoiApiService
         );
     }
 
+    /**
+     * @return Doctor[]
+     */
+    public function getDoctors(): array
+    {
+        /* @phpstan-ignore-next-line */
+        return $this->getRequest(self::API_DOCTORS_GET_LIST_IRI, 0, Doctor::class.'[]');
+    }
+
+    public function postHospitalStay(HospitalStay $hospitalStay): void
+    {
+        // nécessite la désactivation d'une régle rector
+        // https://github.com/symplify/phpstan-rules/blob/main/docs/rules_overview.md#checktypehintcallertyperule
+        $data = (array) $hospitalStay;
+
+        $data['patient'] = $this->getPatientIri($data['patient']);
+        $data['doctor'] = $this->getDoctorIri($data['doctor']);
+        $data['startDate'] = $this->formatDate($data['startDate']);
+        $data['endDate'] = $this->formatDate($data['endDate']);
+
+        $this->postRequest(
+            self::API_HOSPITAL_STAYS_POST_IRI,
+            $data
+        );
+    }
+
     private function getToken(): string
     {
         if (!isset($this->token) || ('' === $this->token || '0' === $this->token)) {
@@ -381,9 +413,27 @@ class SoigneMoiApiService
         return sprintf(self::API_PATIENTS_GET, $patient->id);
     }
 
+    private function getDoctorIri(?Doctor $doctor): string
+    {
+        if (is_null($doctor)) {
+            throw new Exception('Docteur non défini');
+        }
+
+        return sprintf(self::API_DOCTORS_GET, $doctor->id);
+    }
+
     private function getDoctorIriAsCurrentUser(): string
     {
         return sprintf(self::API_DOCTORS_GET, $this->getUserId());
+    }
+
+    private function formatDate(?DateTimeInterface $dateTime): string
+    {
+        if (is_null($dateTime)) {
+            throw new Exception('Date ne peut être null');
+        }
+
+        return $dateTime->format('c');
     }
 
     private function handleNonOkResponse(ResponseInterface $response): void

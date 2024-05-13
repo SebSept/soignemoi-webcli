@@ -1,5 +1,10 @@
 {% extends '/_partial/menu_base.html.twig' %}
 
 {% block user_menu %}
-    <li>...</li>
+    <li>
+        <a href="{{ path('app_patient_home', {'patientId': app.user.id}) }}">Mes rendez-vous</a>
+    </li>
+    <li>
+        <a href="{{ path('app_patient_hospital_stay_edit', {'patientId': app.user.id}) }}">Demander un rendez-vous</a>
+    </li>
 {% endblock %}

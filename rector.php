@@ -13,6 +13,7 @@ use Rector\Config\RectorConfig;
 use Rector\Doctrine\Set\DoctrineSetList;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Symfony\Set\SymfonySetList;
+use Rector\TypeDeclaration\Rector\ClassMethod\AddMethodCallBasedStrictParamTypeRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -44,6 +45,7 @@ return RectorConfig::configure()
         earlyReturn: true,
         strictBooleans: true
     )
+    ->withSkip([AddMethodCallBasedStrictParamTypeRector::class])
     ->withParallel()
-    ->withPHPStanConfigs([__DIR__.'/phpstan.neon']) // @todo fait quoi exactement ?
+    ->withPHPStanConfigs([__DIR__.'/phpstan.neon'])
 ;

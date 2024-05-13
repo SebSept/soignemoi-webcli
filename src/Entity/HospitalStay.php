@@ -13,23 +13,24 @@ namespace App\Entity;
 
 use DateTimeInterface;
 
-readonly class HospitalStay
+class HospitalStay
 {
     /**
      * @param Prescription[]   $prescriptions
      * @param MedicalOpinion[] $medicalOpinions
      */
     public function __construct(
-        public int $id,
-        public DateTimeInterface $startDate,
-        public DateTimeInterface $endDate,
-        public ?DateTimeInterface $checkin,
-        public ?DateTimeInterface $checkout,
-        public string $reason,
-        public string $medicalSpeciality,
-        public Patient $patient,
-        public ?Prescription $todayPrescription,
-        public ?MedicalOpinion $todayMedicalOpinion,
+        public ?int $id = null,
+        public ?DateTimeInterface $startDate = null,
+        public ?DateTimeInterface $endDate = null,
+        public ?DateTimeInterface $checkin = null,
+        public ?DateTimeInterface $checkout = null,
+        public string $reason = '',
+        public string $medicalSpeciality = '',
+        public ?Patient $patient = null,
+        public ?Doctor $doctor = null,
+        public ?Prescription $todayPrescription = null,
+        public ?MedicalOpinion $todayMedicalOpinion = null,
         public array $prescriptions = [],
         public array $medicalOpinions = [],
     ) {

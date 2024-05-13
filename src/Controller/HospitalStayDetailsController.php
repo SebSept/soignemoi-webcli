@@ -16,7 +16,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HospitalStayDetailsController extends AbstractController
 {
-
     #[Route('/hospital_stay/details/{hospitalStayId}', name: 'app_hospital_stay_details')]
     public function index(int $hospitalStayId): Response
     {
