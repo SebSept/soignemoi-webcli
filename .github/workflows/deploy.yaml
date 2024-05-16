@@ -19,6 +19,7 @@ jobs:
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            set -e
             if [ ! -d "/app" ]; then
               git clone --depth=1 --branch main git@github.com:SebSept/soignemoi-webcli.git /app
             fi
