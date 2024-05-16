@@ -1,0 +1,29 @@
+name: Deploy on push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # pour le moment on ne lance pas tests et de verifs
+      # @todo tests, lint, etc
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: cli.ecf.seb7.fr
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            if [ ! -d "/app" ]; then
+              git clone --depth=1 --branch main git@github.com:SebSept/soignemoi-webcli.git /app
+            fi
+            cd /app
+            git fetch origin main --depth=1
+            git reset --hard origin/main --
+            docker compose -f compose-prod.yaml up -d --build
+            docker compose -f compose-prod.yaml exec php composer install --no-dev

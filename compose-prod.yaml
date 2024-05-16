@@ -1,0 +1,28 @@
+services:
+  nginx:
+    depends_on:
+      php:
+        condition: service_started
+    # voir config dans docker/nginx_default.conf
+    expose:
+      - "90"
+    image: nginx:1.21.3
+    ports:
+      - target: 90
+        published: 80
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ./docker/nginx_default.conf
+        target: /etc/nginx/conf.d/default.conf
+      - type: bind
+        source: ./public
+        target: /app/public
+  php:
+    image: ghcr.io/sebsept/docker-php-symfony-starter:prod
+    restart: unless-stopped
+    user: 0:1000
+    volumes:
+      - type: bind
+        source: ./
+        target: /app

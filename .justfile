@@ -1,19 +1,19 @@
 set dotenv-load
-docker_php_exec := "docker compose exec -it -u climber php"
+docker_php_exec := "docker compose -f compose-dev.yaml exec -it -u climber php"
 symfony := docker_php_exec + " symfony "
 composer := symfony + " composer "
 console := symfony + "console "
-docker_exec_nginx := "docker compose exec -it -u root nginx"
+docker_exec_nginx := "docker compose -f compose-dev.yaml exec -it -u root nginx"
 browser := "firefox"
 
 up:
-    docker compose up -d
+    docker compose -f compose-dev.yaml up -d
 
 # update source files + docker compose down+up
 update: && tests
     git pull
-    docker compose down
-    docker compose up -d --build
+    docker compose -f compose-dev.yaml down
+    docker compose -f compose-dev.yaml up -d --build
     {{composer}} install
     {{console}} importmap:install
     {{console}} importmap:outdated
@@ -28,7 +28,7 @@ fish:
 
 [private]
 fish_root:
-    docker compose exec -it -u root php fish
+    docker compose -f compose-dev.yaml exec -it -u root php fish
 
 new-controller:
     {{console}} make:controller
@@ -108,7 +108,7 @@ pre-commit:
 [private]
 [confirm("Écraser .git/hooks/pre-commit ?")]
 install-pre-commit-hook:
-    echo "docker compose exec -u climber php symfony composer run-script pre-commit" > .git/hooks/pre-commit
+    echo "docker compose -f compose-dev.yaml exec -u climber php symfony composer run-script pre-commit" > .git/hooks/pre-commit
     {{docker_php_exec}} chmod +x .git/hooks/pre-commit
 
 # firt run docker compose up + composer install + open browser

@@ -3,8 +3,9 @@ services:
     depends_on:
       php:
         condition: service_started
+    # voir config dans docker/nginx_default.conf
     expose:
-      - "${NGINX_PORT}"
+      - "90"
     image: nginx:1.21.3
     networks:
       nginx: null
@@ -20,7 +21,7 @@ services:
         source: ./public
         target: /app/public
   php:
-    image: ghcr.io/sebsept/docker-php-symfony-starter:main
+    image: ghcr.io/sebsept/docker-php-symfony-starter:dev
     networks:
       - nginx
       - partage
