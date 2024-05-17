@@ -13,11 +13,17 @@
     {% endblock %}
 </head>
 <body>
-<div class="container mt-2">
-    <header class="text-center">
-        <h1 class="h1">Hopital SoigneMoi</h1>
-    </header>
-    {% include '_partial/menu_' ~ app.user.role|default('visitor') ~ '.html.twig' %}
+<div class="container-fluid mt-2">
+        <div class="row mb-2">
+            <div class="col-10 d-flex justify-content-left align-items-center">
+                <header>
+                    <h1 class="h1">Hopital SoigneMoi</h1>
+                </header>
+            </div>
+            <div class="col-2 d-flex align-items-center justify-content-end">
+                {% include '_partial/menu_' ~ app.user.role|default('visitor') ~ '.html.twig' %}
+            </div>
+        </div>
 
     {% block flash %}
         {# read and display all flash messages #}
