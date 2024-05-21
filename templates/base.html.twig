@@ -31,7 +31,7 @@
         {% for label, messages in app.flashes %}
             {% for message in messages %}
                 {# https://getbootstrap.com/docs/4.0/components/alerts/ #}
-                <div class="alert alert-{{ label }}">
+                <div class="alert alert-{{ label }}" role="alert">
                     {{ message }}
                 </div>
             {% endfor %}
