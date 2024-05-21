@@ -5,11 +5,14 @@ services:
         condition: service_started
     # voir config dans docker/nginx_default.conf
     expose:
-      - "90"
+      - "80"
+      - "443"
     image: nginx:1.21.3
     ports:
-      - target: 90
+      - target: 80
         published: 80
+      - target: 443
+        published: 443
     restart: unless-stopped
     volumes:
       - type: bind
@@ -18,6 +21,22 @@ services:
       - type: bind
         source: ./public
         target: /app/public
+      # données accessible par le web pour la validation letencrypt
+      - type: volume
+        source: certbot-www
+        target: /certbot-www
+      # volume avec les certificats
+      - type: volume
+        source: certbot-etc
+        target: /etc/letsencrypt
+      # 2nd volume utilisé pour le certificat
+      - type: volume
+        source: certbot-var
+        target: /var/lib/letsencrypt
+      # volume pour les données ssl générées par nginx
+      - type: volume
+        source: nginx_data_ssl
+        target: /etc/nginx/ssl
   php:
     image: ghcr.io/sebsept/docker-php-symfony-starter:prod
     restart: unless-stopped
@@ -26,3 +45,17 @@ services:
       - type: bind
         source: ./
         target: /app
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - certbot-www:/var/www/certbot
+    restart: no
+
+volumes:
+  certbot-www:
+  certbot-etc:
+  certbot-var:
+  nginx_data_ssl:
