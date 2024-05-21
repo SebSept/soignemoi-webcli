@@ -2,9 +2,24 @@
 
 {% block user_menu %}
     <li>
-        <a  class="dropdown-item"  href="{{ path('app_patient_home', {'patientId': app.user.id}) }}">Mes rendez-vous</a>
+        <a  class="dropdown-item d-flex align-items-center"  href="{{ path('app_patient_home', {'patientId': app.user.id}) }}">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 16 16"
+                 width="16"
+                 height="16"
+                 class="mx-1"
+            ><path d="M4.75 0a.75.75 0 0 1 .75.75V2h5V.75a.75.75 0 0 1 1.5 0V2h1.25c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 13.25 16H2.75A1.75 1.75 0 0 1 1 14.25V3.75C1 2.784 1.784 2 2.75 2H4V.75A.75.75 0 0 1 4.75 0ZM2.5 7.5v6.75c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25V7.5Zm10.75-4H2.75a.25.25 0 0 0-.25.25V6h11V3.75a.25.25 0 0 0-.25-.25Z"></path></svg>
+            Mes rendez-vous</a>
     </li>
     <li>
-        <a  class="dropdown-item"  href="{{ path('app_patient_hospital_stay_edit', {'patientId': app.user.id}) }}">Demander un rendez-vous</a>
+        <a  class="dropdown-item d-flex align-items-center" href="{{ path('app_patient_hospital_stay_edit', {'patientId': app.user.id}) }}">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 16 16"
+                 width="16"
+                 height="16"
+                 class="mx-1"
+            ><path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"></path></svg>
+            Demander un rendez-vous
+        </a>
     </li>
 {% endblock %}
