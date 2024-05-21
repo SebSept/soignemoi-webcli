@@ -103,7 +103,7 @@
     },
     "cs-fixer": "php-cs-fixer fix",
     "import-map": "@php bin/console importmap:audit",
-    "phpstan": "phpstan",
+    "phpstan": "phpstan analyse",
     "pre-commit": [
       "symfony composer validate",
       "@rector",
