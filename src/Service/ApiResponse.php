@@ -14,7 +14,7 @@ namespace App\Service;
 readonly class ApiResponse
 {
     public function __construct(
-        public bool $ok,
+    public bool $ok,
         public string $token = '',
         public string $role = '',
         public ?int $id = null,
