@@ -102,6 +102,14 @@
       "importmap:install": "symfony-cmd",
       "asset-map:compile": "symfony-cmd"
     },
+    "ci": [
+      "symfony composer validate --strict",
+      "@rector --dry-run --no-progress-bar",
+      "php-cs-fixer check --show-progress none --diff",
+      "symfony composer normalize",
+      "@phpstan",
+      "@tests"
+    ],
     "cs-fixer": "php-cs-fixer fix",
     "import-map": "@php bin/console importmap:audit",
     "phpstan": "phpstan analyse",

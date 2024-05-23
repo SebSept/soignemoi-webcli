@@ -6,12 +6,28 @@ on:
       - main
 
 jobs:
-  deploy:
+  quality:
     runs-on: ubuntu-latest
 
     steps:
-      # pour le moment on ne lance pas tests et de verifs
-      # @todo tests, lint, etc
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: docker compose
+        run: |
+          set -e
+          docker network create partage
+          docker compose --progress quiet -f compose-dev.yaml up -d --build
+          docker compose -f compose-dev.yaml exec php composer install --quiet
+
+      - name: composer ci
+        run: docker compose -f compose-dev.yaml exec php composer run-script ci
+
+  deploy:
+    needs: quality
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
