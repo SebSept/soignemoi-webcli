@@ -16,6 +16,7 @@ use App\Entity\HospitalStay;
 use App\Entity\MedicalOpinion;
 use App\Entity\Patient;
 use App\Entity\Prescription;
+use App\Security\User;
 use DateTime;
 use DateTimeInterface;
 use Exception;
@@ -321,7 +322,9 @@ class SoigneMoiApiService
     private function getToken(): string
     {
         if (!isset($this->token) || ('' === $this->token || '0' === $this->token)) {
-            $token = $this->security->getUser()?->getToken() ?? '';
+            /** @var ?User $user */
+            $user = $this->security->getUser();
+            $token = $user?->getToken() ?? '';
             if (empty($token)) {
                 throw new AccessDeniedException();
             }
@@ -335,7 +338,9 @@ class SoigneMoiApiService
     private function getUserId(): int
     {
         if (!isset($this->userId)) {
-            $userId = $this->security->getUser()?->getId() ?? null;
+            /** @var ?User $user */
+            $user = $this->security->getUser();
+            $userId = $user?->getId() ?? null;
             if (is_null($userId)) {
                 throw new AccessDeniedException();
             }

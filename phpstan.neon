@@ -6,8 +6,5 @@ parameters:
         - src/Factory/*
         - src/DataFixtures/*
         - src/tests/*
-        - phpstan-stubs.stub
-    stubFiles:
-        - phpstan-stubs.stub
 includes:
     - phpstan-baseline.neon
