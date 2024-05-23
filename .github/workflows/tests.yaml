@@ -18,5 +18,7 @@ jobs:
           set -e
           docker network create partage
           docker compose --progress quiet -f compose-dev.yaml up -d --build
-          docker compose -f compose-dev.yaml exec php composer install
-          docker-compose -f compose-dev.yaml exec -t php composer run-script ci
+          docker compose -f compose-dev.yaml exec php composer install --quiet
+
+      - name: composer ci
+        run: docker-compose -f compose-dev.yaml exec php composer run-script ci
