@@ -21,4 +21,4 @@ jobs:
           docker compose -f compose-dev.yaml exec php composer install --quiet
 
       - name: composer ci
-        run: docker-compose -f compose-dev.yaml -it exec php composer run-script ci
+        run: docker-compose -f compose-dev.yaml exec -it php composer run-script ci
