@@ -11,6 +11,9 @@ on:
   schedule:
     - cron: '0 8 * * 1-5'
 
+permissions:
+  pull-requests: write
+
 jobs:
   setup:
     # récolte le noms des images docker utilisées
