@@ -25,13 +25,13 @@
                             faite
                         {% else %}
                             <a
-                                    href="{{ path('app_hospital_stay_checkin', {"hospitalStayId": stay.id}) }}"
+                                    href="{{ path('app_hospital_stay_checkin', {hospitalStayId: stay.id}) }}"
                                     class="btn btn-outline-primary">
                                 Entrer
                             </a>
                         {% endif %}</td>
                     <td>
-                        <a href="{{ path('app_hospital_stay_details', {'hospitalStayId': stay.id}) }}">dossier</a>
+                        <a href="{{ path('app_hospital_stay_details', {hospitalStayId: stay.id}) }}">dossier</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -66,13 +66,13 @@
                             faite
                         {% else %}
                             <a
-                                    href="{{ path('app_hospital_stay_checkout', {"hospitalStayId": stay.id}) }}"
+                                    href="{{ path('app_hospital_stay_checkout', {hospitalStayId: stay.id}) }}"
                                     class="btn btn-outline-primary">
                                 Sortir
                             </a>
                         {% endif %}</td>
                     <td>
-                        <a href="{{ path('app_hospital_stay_details', {'hospitalStayId': stay.id}) }}">dossier</a>
+                        <a href="{{ path('app_hospital_stay_details', {hospitalStayId: stay.id}) }}">dossier</a>
                     </td>
                 </tr>
             {% endfor %}

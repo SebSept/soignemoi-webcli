@@ -24,7 +24,7 @@
                 </header>
             </div>
             <div class="col-2 d-flex align-items-center justify-content-end">
-                {% include '_partial/menu_' ~ app.user.role|default('visitor') ~ '.html.twig' %}
+                {{ include('_partial/menu_' ~ app.user.role|default('visitor') ~ '.html.twig') }}
             </div>
         </div>
 

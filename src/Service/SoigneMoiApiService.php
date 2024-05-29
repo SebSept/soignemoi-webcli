@@ -48,35 +48,35 @@ class SoigneMoiApiService
 
     private const API_MEDICAL_OPINIONS_GET_IRI = self::API_MEDICAL_OPINIONS_PATCH_IRI;
 
-    private const API_MEDICAL_OPINIONS_POST_IRI = '/api/medical_opinions';
+    private const string API_MEDICAL_OPINIONS_POST_IRI = '/api/medical_opinions';
 
-    private const API_MEDICAL_OPINIONS_PATCH_IRI = '/api/medical_opinions/%d';
+    private const string API_MEDICAL_OPINIONS_PATCH_IRI = '/api/medical_opinions/%d';
 
-    private const API_PRESCRIPTIONS_GET_IRI = self::API_PRESCRIPTIONS_PATCH_IRI;
+    private const string API_PRESCRIPTIONS_GET_IRI = self::API_PRESCRIPTIONS_PATCH_IRI;
 
-    private const API_PRESCRIPTIONS_POST_IRI = '/api/prescriptions';
+    private const string API_PRESCRIPTIONS_POST_IRI = '/api/prescriptions';
 
-    private const API_PRESCRIPTIONS_PATCH_IRI = '/api/prescriptions/%d';
+    private const string API_PRESCRIPTIONS_PATCH_IRI = '/api/prescriptions/%d';
 
-    private const API_PATIENTS_HOSPITAL_STAYS_GET_IRI = '/api/patients/hospital_stays';
+    private const string API_PATIENTS_HOSPITAL_STAYS_GET_IRI = '/api/patients/hospital_stays';
 
-    private const API_DOCTORS_HOSPITAL_STAYS_GET_IRI = '/api/doctors/%d/hospital_stays/today';
+    private const string API_DOCTORS_HOSPITAL_STAYS_GET_IRI = '/api/doctors/%d/hospital_stays/today';
 
-    private const API_PATIENTS_GET = '/api/patients/%d';
+    private const string API_PATIENTS_GET = '/api/patients/%d';
 
-    private const API_DOCTORS_GET = '/api/doctors/%d';
+    private const string API_DOCTORS_GET = '/api/doctors/%d';
 
-    private const API_DOCTORS_GET_LIST_IRI = '/api/doctors';
+    private const string API_DOCTORS_GET_LIST_IRI = '/api/doctors';
 
-    private const API_SECRETARY_HOSPITAL_STAYS_ENTRIES_TODAY = '/api/hospital_stays/today_entries';
+    private const string API_SECRETARY_HOSPITAL_STAYS_ENTRIES_TODAY = '/api/hospital_stays/today_entries';
 
-    private const API_SECRETARY_HOSPITAL_STAYS_EXITS_TODAY = '/api/hospital_stays/today_exits';
+    private const string API_SECRETARY_HOSPITAL_STAYS_EXITS_TODAY = '/api/hospital_stays/today_exits';
 
-    private const API_HOSPITAL_STAY_DETAILS = '/api/hospital_stays/%d';
+    private const string API_HOSPITAL_STAY_DETAILS = '/api/hospital_stays/%d';
 
-    private const API_HOSPITAL_STAYS_PATCH_IRI = self::API_HOSPITAL_STAY_DETAILS;
+    private const string API_HOSPITAL_STAYS_PATCH_IRI = self::API_HOSPITAL_STAY_DETAILS;
 
-    private const API_HOSPITAL_STAYS_POST_IRI = '/api/hospital_stays';
+    private const string API_HOSPITAL_STAYS_POST_IRI = '/api/hospital_stays';
 
     private string $token;
 

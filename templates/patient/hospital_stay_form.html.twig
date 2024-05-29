@@ -5,7 +5,7 @@
 {% block body %}
     <div class="row">
         <h2>Nouveau séjour</h2>
-        {{ form_start(form, {'action': path('app_patient_hospital_stay_edit_submit')}) }}
+        {{ form_start(form, {action: path('app_patient_hospital_stay_edit_submit')}) }}
         {{ form_rest(form) }}
     </div>
 {% endblock %}
