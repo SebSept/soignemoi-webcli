@@ -5,7 +5,7 @@
 {% block body %}
     <div class="row">
         <h2>Prescription</h2>
-        {{ form_start(form, {'action': path('app_doctor_patients_today_prescription_submit')}) }}
+        {{ form_start(form, {action: path('app_doctor_patients_today_prescription_submit')}) }}
         <button type="button" class="btn btn-primary add_item_link">Ajouter une prescription</button>
         {{ form_rest(form) }}
         {# {{ form_row(form.prescriptionItems.vars.prototype) }} #}

@@ -2,7 +2,7 @@
 
 {% block user_menu %}
     <li>
-        <a  class="dropdown-item d-flex align-items-center"  href="{{ path('app_patient_home', {'patientId': app.user.id}) }}">
+        <a  class="dropdown-item d-flex align-items-center"  href="{{ path('app_patient_home', {patientId: app.user.id}) }}">
             <svg xmlns="http://www.w3.org/2000/svg"
                  viewBox="0 0 16 16"
                  width="16"
@@ -12,7 +12,7 @@
             Mes rendez-vous</a>
     </li>
     <li>
-        <a  class="dropdown-item d-flex align-items-center" href="{{ path('app_patient_hospital_stay_edit', {'patientId': app.user.id}) }}">
+        <a  class="dropdown-item d-flex align-items-center" href="{{ path('app_patient_hospital_stay_edit', {patientId: app.user.id}) }}">
             <svg xmlns="http://www.w3.org/2000/svg"
                  viewBox="0 0 16 16"
                  width="16"
