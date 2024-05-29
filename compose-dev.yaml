@@ -6,7 +6,7 @@ services:
     # voir config dans docker/nginx_prod.conf
     expose:
       - "90"
-    image: nginx:1.21.3
+    image: nginx:1.26.0
     networks:
       nginx: null
     ports:
