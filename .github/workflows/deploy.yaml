@@ -6,6 +6,7 @@ on:
       - main
 
 jobs:
+  # lancement des tests
   quality:
     runs-on: ubuntu-latest
 
@@ -23,6 +24,7 @@ jobs:
       - name: composer ci
         run: docker compose -f compose-dev.yaml exec php composer run-script ci
 
+  # déploiement
   deploy:
     needs: quality
     runs-on: ubuntu-latest
@@ -43,5 +45,6 @@ jobs:
             git fetch origin main --depth=1
             git reset --hard origin/main --
             docker compose -f compose-prod.yaml down
+            docker compose -f compose-prod.yaml pull
             docker compose -f compose-prod.yaml up -d --build
             docker compose -f compose-prod.yaml exec php composer install --no-dev

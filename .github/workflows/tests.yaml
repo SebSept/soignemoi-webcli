@@ -1,5 +1,5 @@
 name: Tests
-
+# les tests sont aussi inclus dans le workflow deploy avant le déploiement.
 on:
   push:
     branches:
