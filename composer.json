@@ -39,6 +39,7 @@
     "phpstan/phpstan": "^1.10.67",
     "phpunit/phpunit": "^10.5.20",
     "rector/rector": "^1.0.4",
+    "roave/security-advisories": "dev-latest",
     "symfony/browser-kit": "~7.0.3",
     "symfony/css-selector": "~7.0.3",
     "symfony/debug-bundle": "~7.0.3",
@@ -107,6 +108,8 @@
       "@rector --dry-run --no-progress-bar",
       "php-cs-fixer check --show-progress none --diff",
       "symfony composer normalize",
+      "symfony composer audit",
+      "symfony security:check",
       "@phpstan",
       "@tests"
     ],
