@@ -20,7 +20,7 @@
     {# affichage de l'identitié de l'utilisateur et lien de logout #}
     {% if app.user %}
         <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+            Connecté sous {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Déconnexion</a>
         </div>
         {# form de connexion #}
     {% else %}
@@ -44,7 +44,7 @@
                autocomplete="email"
                required autofocus>
 
-        <label for="inputPassword">Password</label>
+        <label for="inputPassword">Mot de passe</label>
         <input type="password"
                name="password"
                id="inputPassword"

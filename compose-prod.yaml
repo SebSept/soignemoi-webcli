@@ -7,7 +7,7 @@ services:
     expose:
       - "80"
       - "443"
-    image: nginx:1.21.3
+    image: nginx:1.26.0
     ports:
       - target: 80
         published: 80
