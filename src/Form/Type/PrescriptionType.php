@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace App\Form\Type;
 
+use Override;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Entity\Prescription;
@@ -24,6 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PrescriptionType extends AbstractType
 {
+    #[Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -49,6 +51,7 @@ class PrescriptionType extends AbstractType
         ;
     }
 
+    #[Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

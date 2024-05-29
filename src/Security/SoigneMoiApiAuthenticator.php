@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
+use Override;
 use App\Service\SoigneMoiApiService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -44,6 +45,7 @@ class SoigneMoiApiAuthenticator extends AbstractLoginFormAuthenticator
     ) {
     }
 
+    #[Override]
     public function authenticate(Request $request): Passport
     {
         $email = $request->getPayload()->getString('email');
@@ -88,6 +90,7 @@ class SoigneMoiApiAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
+    #[Override]
     public function onAuthenticationSuccess(
         Request $request,
         TokenInterface $token,
@@ -107,6 +110,7 @@ class SoigneMoiApiAuthenticator extends AbstractLoginFormAuthenticator
         return new RedirectResponse($this->urlGenerator->generate($redirectedTo));
     }
 
+    #[Override]
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
         if ($request->hasSession()) {
@@ -118,6 +122,7 @@ class SoigneMoiApiAuthenticator extends AbstractLoginFormAuthenticator
         return new RedirectResponse($url);
     }
 
+    #[Override]
     protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
@@ -129,6 +134,7 @@ class SoigneMoiApiAuthenticator extends AbstractLoginFormAuthenticator
      * Méthode de AuthenticationEntryPointInterface
      * utilisée quand on a emis une exception AuthenticationException
      */
+    #[Override]
     public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
         if ($this->security->getUser() instanceof UserInterface) {

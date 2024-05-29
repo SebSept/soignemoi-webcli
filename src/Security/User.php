@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
+use Override;
 use Exception;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -46,6 +47,7 @@ class User implements UserInterface
      *
      * @see UserInterface
      */
+    #[Override]
     public function getUserIdentifier(): string
     {
         return $this->email;
@@ -56,6 +58,7 @@ class User implements UserInterface
      *
      * @return string[]
      */
+    #[Override]
     public function getRoles(): array
     {
         return $this->roles;
@@ -90,6 +93,7 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
+    #[Override]
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here

@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace App\Form\Type;
 
+use Override;
 use App\Entity\Doctor;
 use App\Entity\HospitalStay;
 use App\Entity\Patient;
@@ -25,6 +26,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class HospitalStayType extends AbstractType
 {
+    #[Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('patient', HiddenType::class, [
@@ -44,6 +46,7 @@ class HospitalStayType extends AbstractType
         $builder->add('submit', SubmitType::class, ['label' => 'Envoyer']);
     }
 
+    #[Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

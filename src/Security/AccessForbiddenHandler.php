@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
+use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +27,7 @@ class AccessForbiddenHandler implements AccessDeniedHandlerInterface
     {
     }
 
+    #[Override]
     public function handle(Request $request, AccessDeniedException $accessDeniedException): ?Response
     {
         if ($request->hasSession() && assert($request->getSession() instanceof FlashBagAwareSessionInterface)) {

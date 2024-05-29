@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
+use Override;
 use LogicException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -30,6 +31,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
      * car notre Authenticator créé un Passport
      * avec un badge qui à un callback qui remplace cette fonction.
      */
+    #[Override]
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
         throw new LogicException('This method should never be called.');
@@ -44,6 +46,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
      * If your firewall is "stateless: true" (for a pure API), this
      * method is not called.
      */
+    #[Override]
     public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof User) {
@@ -64,6 +67,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
     /**
      * Tells Symfony to use this provider for this User class.
      */
+    #[Override]
     public function supportsClass(string $class): bool
     {
         return User::class === $class || is_subclass_of($class, User::class);
@@ -72,6 +76,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
     /**
      * Upgrades the hashed password of a user, typically for using a better hash algorithm.
      */
+    #[Override]
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
     }
