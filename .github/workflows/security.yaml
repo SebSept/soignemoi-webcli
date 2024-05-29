@@ -1,0 +1,123 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  # chaque jour du lundi au vendredi à 8h
+  schedule:
+    - cron: '0 8 * * 1-5'
+
+jobs:
+  setup:
+    # récolte le noms des images docker utilisées
+    # récolte dans 2 variables/output, au format json {"image" : ["vendor/image", ... ]}
+    runs-on: ubuntu-latest
+    outputs:
+      docker_images: ${{ steps.set-matrix.outputs.docker_images }}
+      github_images: ${{ steps.set-matrix.outputs.github_images }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # écrit dans deux fichiers, au format json,
+      # la liste des images hebergé sur docker.io et sur le registre github
+      - name: Get image values
+        id: prepare-matrix
+        run: |
+          echo '{"image": ['$(yq -r '.services[]?.image?' compose-prod.yaml | grep --invert ghcr | tr '\n' ',' | sed 's/,/", "/g' | sed 's/^/"/' | sed 's/$/"/')']}' | tee docker_images_matrix.json
+          echo '{"image": ['$(yq -r '.services[]?.image?' compose-prod.yaml | grep ghcr | tr '\n' ',' | sed 's/,/", "/g' | sed 's/^/"/' | sed 's/$/"/')']}' | tee github_images_matrix.json
+
+      - name: Set matrix
+        id: set-matrix
+        run: |
+          echo "docker_images=$(jq -c . < docker_images_matrix.json)" >> $GITHUB_OUTPUT
+          echo "github_images=$(jq -c . < github_images_matrix.json)" >> $GITHUB_OUTPUT
+          echo "debug : docker_images=$(jq -c . < docker_images_matrix.json)"
+          echo "debug :  github_images=$(jq -c . < github_images_matrix.json)"
+
+  security-docker-io:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.setup.outputs.docker_images)}}
+    steps:
+      - name: Checkout code
+        if: matrix.image != ''
+        uses: actions/checkout@v4
+
+      - name: Log into registry docker.io
+        if: matrix.image != ''
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PAT }}
+
+      - name: Docker Scout images standards
+        if: matrix.image != ''
+        id: docker-scout
+        uses: docker/scout-action@v1
+        with:
+          command: quickview
+          image: ${{ matrix.image }}
+          only-severities: critical,high
+          write-comment: true
+
+  security-docker-github:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.setup.outputs.github_images)}}
+    steps:
+      - name: Checkout code
+        if: matrix.image != ''
+        uses: actions/checkout@v4
+
+      - name: Log into registry github
+        if: matrix.image != ''
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log into registry docker.io
+        if: matrix.image != ''
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PAT }}
+
+      - name: Docker Scout images github
+        if: matrix.image != ''
+        id: docker-scout
+        uses: docker/scout-action@v1
+        with:
+          command: quickview
+          image: ${{ matrix.image }}
+          only-severities: critical,high
+          write-comment: true
+
+#  trivy:
+#    needs: setup
+#    runs-on: ubuntu-latest
+##    strategy:
+##      matrix:
+##        image: [ 'docker.io/nginx:1.21.3', 'ghcr.io/sebsept/docker-php-symfony-starter:prod' ]
+#    strategy:
+#      matrix: ${{fromJson(needs.setup.outputs.matrix)}}
+#    steps:
+#      - name: Run Trivy vulnerability scanner
+#        uses: aquasecurity/trivy-action@0.21.0
+#        if: matrix.image != ''
+#        with:
+#          image-ref: ${{ matrix.image }}
+#          format: 'table'
+#          exit-code: '1'
+#          ignore-unfixed: true
+#          vuln-type: 'os,library'
+#          severity: 'CRITICAL,HIGH'
+#          scanners: 'vuln'
