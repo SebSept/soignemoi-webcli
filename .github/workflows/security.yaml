@@ -4,15 +4,13 @@ on:
   push:
     branches:
       - main
+      - dev
   pull_request:
     branches:
       - main
   # chaque jour du lundi au vendredi à 8h
   schedule:
     - cron: '0 8 * * 1-5'
-
-permissions:
-  pull-requests: write
 
 jobs:
   setup:
@@ -45,6 +43,9 @@ jobs:
   security-docker-io:
     needs: setup
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     strategy:
       matrix: ${{fromJson(needs.setup.outputs.docker_images)}}
     steps:
@@ -69,12 +70,16 @@ jobs:
           image: ${{ matrix.image }}
           only-severities: critical,high
           write-comment: true
+          keep-previous-comments: true
           only-fixed: true
           exit-code: true
 
   security-docker-github:
     needs: setup
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     strategy:
       matrix: ${{fromJson(needs.setup.outputs.github_images)}}
     steps:
@@ -107,25 +112,5 @@ jobs:
           image: ${{ matrix.image }}
           only-severities: critical,high,medium
           write-comment: true
+          keep-previous-comments: true
           exit-code: true
-
-#  trivy:
-#    needs: setup
-#    runs-on: ubuntu-latest
-##    strategy:
-##      matrix:
-##        image: [ 'docker.io/nginx:1.21.3', 'ghcr.io/sebsept/docker-php-symfony-starter:prod' ]
-#    strategy:
-#      matrix: ${{fromJson(needs.setup.outputs.matrix)}}
-#    steps:
-#      - name: Run Trivy vulnerability scanner
-#        uses: aquasecurity/trivy-action@0.21.0
-#        if: matrix.image != ''
-#        with:
-#          image-ref: ${{ matrix.image }}
-#          format: 'table'
-#          exit-code: '1'
-#          ignore-unfixed: true
-#          vuln-type: 'os,library'
-#          severity: 'CRITICAL,HIGH'
-#          scanners: 'vuln'
