@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use Override;
 use Exception;
+use Override;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class User implements UserInterface

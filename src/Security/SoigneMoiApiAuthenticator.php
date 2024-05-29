@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use Override;
 use App\Service\SoigneMoiApiService;
+use Override;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

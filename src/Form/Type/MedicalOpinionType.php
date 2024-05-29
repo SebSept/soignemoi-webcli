@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace App\Form\Type;
 
-use Override;
 use App\Entity\Doctor;
 use App\Entity\MedicalOpinion;
 use App\Entity\Patient;
+use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
