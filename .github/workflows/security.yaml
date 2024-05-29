@@ -11,6 +11,9 @@ on:
   schedule:
     - cron: '0 8 * * 1-5'
 
+permissions:
+  pull-requests: write
+
 jobs:
   setup:
     # récolte le noms des images docker utilisées
@@ -68,7 +71,6 @@ jobs:
           write-comment: true
           only-fixed: true
           exit-code: true
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   security-docker-github:
     needs: setup
