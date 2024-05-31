@@ -104,30 +104,38 @@
       "asset-map:compile": "symfony-cmd"
     },
     "ci": [
-      "symfony composer validate --strict",
-      "@rector --dry-run --no-progress-bar",
-      "php-cs-fixer check --show-progress none --diff",
-      "symfony composer normalize",
-      "symfony composer audit",
-      "symfony security:check",
+      "@lint-passive",
+      "@security",
       "@phpstan",
       "@tests"
     ],
-    "cs-fixer": "php-cs-fixer fix",
-    "import-map": "@php bin/console importmap:audit",
+    "lint-active": [
+      "twig-cs-fixer",
+      "symfony composer validate --strict",
+      "symfony composer normalize",
+      "php-cs-fixer fix",
+      "@rector"
+    ],
+    "lint-passive": [
+      "symfony composer validate --strict",
+      "symfony composer normalize --dry-run --diff",
+      "php-cs-fixer check --show-progress none --diff",
+      "@rector --dry-run --no-progress-bar"
+    ],
     "phpstan": "phpstan analyse",
     "pre-commit": [
-      "symfony composer validate",
-      "@rector",
-      "@cs-fixer",
-      "@twig-lint",
-      "symfony composer normalize",
-      "@import-map",
+      "@lint-active",
+      "@security",
       "@phpstan",
       "@tests"
     ],
     "rector": "php vendor/bin/rector",
+    "security": [
+      "symfony composer audit",
+      "symfony check:security",
+      "symfony console importmap:audit"
+    ],
     "tests": "php vendor/bin/paratest --runner WrapperRunner",
-    "twig-lint": "twig-cs-fixer lint --fix templates/"
+    "twig-cs-fixer": "twig-cs-fixer lint --fix templates/"
   }
 }

@@ -34,7 +34,7 @@ jobs:
 
     steps:
       - name: Deploy to server
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@f9163462563f649b27272d32e585525a5fe68d76
         with:
           host: cli.ecf.seb7.fr
           username: root
