@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
+use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 
 $header = <<<'EOF'
     SoigneMoi Webcli - Projet ECF
@@ -20,6 +21,7 @@ $finder = (new Finder())
 
 return (new Config())
     ->setRiskyAllowed(true)
+    ->setParallelConfig(ParallelConfigFactory::detect())
     ->setRules([
         '@Symfony' => true,
         'global_namespace_import' => ['import_classes' => true, 'import_constants' => true, 'import_functions' => true],
