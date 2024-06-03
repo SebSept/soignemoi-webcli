@@ -3,12 +3,14 @@
 {% block title %}Hopital SoigneMoi{% endblock %}
 
 {% block body %}
+    {# titre #}
     <div class="row">
         <div class="col text-center m-2">
             <h1>Présentation de l'hopital</h1>
         </div>
     </div>
 
+    {# contenu #}
     <div class="row">
         <div class="col-lg-9">
             <h2>Présentation</h2>
@@ -17,10 +19,6 @@
         <div class="col-lg-3 bg-info-subtle p-3">
             {{ include('/_partial/login.html.twig') }}
         </div>
-    </div>
-
-    <div class="row">
-
     </div>
 
 {% endblock %}
