@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to server
+      - name: Déploiement
         uses: appleboy/ssh-action@f9163462563f649b27272d32e585525a5fe68d76
         with:
           host: cli.ecf.seb7.fr
@@ -51,3 +51,6 @@ jobs:
             docker compose -f compose-prod.yaml pull
             docker compose -f compose-prod.yaml up -d --build
             docker compose -f compose-prod.yaml exec php composer install --no-dev
+
+      - name: Check déploiement
+        run: curl --fail https://cli.ecf.seb7.fr
