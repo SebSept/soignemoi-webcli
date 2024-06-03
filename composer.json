@@ -36,6 +36,7 @@
     "brianium/paratest": "^7.4.4",
     "ergebnis/composer-normalize": "^2.42",
     "fakerphp/faker": "^1.23.1",
+    "liip/imagine-bundle": "^2.12",
     "phpstan/phpstan": "^1.10.67",
     "phpunit/phpunit": "^10.5.20",
     "rector/rector": "^1.0.4",
