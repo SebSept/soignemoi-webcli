@@ -1,8 +1,7 @@
 set dotenv-load
-docker_php_exec := "docker compose -f compose-dev.yaml exec -it -u climber php"
-symfony := docker_php_exec + " symfony "
-composer := symfony + " composer "
-console := symfony + "console "
+docker_php_exec := "docker compose -f compose-dev.yaml exec -it php"
+composer := docker_php_exec + " composer "
+console := docker_php_exec + "console "
 docker_exec_nginx := "docker compose -f compose-dev.yaml exec -it -u root nginx"
 browser := "firefox"
 
@@ -31,32 +30,17 @@ fish:
 fish_root:
     docker compose -f compose-dev.yaml exec -it -u root php fish
 
+rebuild-php:
+    docker compose -f compose-dev.yaml down php
+    docker compose -f compose-dev.yaml up php
+
 new-controller:
     {{console}} make:controller
-
-new-api:
-    {{console}} make:entity --api-resource
-    {{console}} make:migration
-    {{console}} doctrine:migrations:migrate --no-interaction
-
-# recréer une base de données
-db-create:
-    {{console}} doctrine:database:drop --quiet --no-interaction --if-exists --force
-    {{console}} doctrine:database:create --quiet --no-interaction
-    {{console}} doctrine:schema:create --quiet --no-interaction
-    echo "Base de données recréée"
-
-db-migrate:
-    {{console}} doctrine:migrations:migrate --no-interaction
 
 db-create-test:
     {{console}} doctrine:database:drop --env=test --force --if-exists
     {{console}} doctrine:database:create --env=test
     {{console}} doctrine:schema:create --env=test
-
-# Création des classes de fixtures
-db-fixtures-make entity:
-    {{console}} make:fixtures {{entity}}Fixtures
 
 # Lancement scripts d'outil de qualité via composer
 composer script:
@@ -109,7 +93,7 @@ pre-commit:
 [private]
 [confirm("Écraser .git/hooks/pre-commit ?")]
 install-pre-commit-hook:
-    echo "docker compose -f compose-dev.yaml exec -u climber php symfony composer run-script pre-commit" > .git/hooks/pre-commit
+    echo "docker compose -f compose-dev.yaml exec php composer run-script pre-commit" > .git/hooks/pre-commit
     {{docker_php_exec}} chmod +x .git/hooks/pre-commit
 
 # firt run docker compose up + composer install + open browser
