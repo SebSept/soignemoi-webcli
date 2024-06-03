@@ -110,13 +110,14 @@
       "@tests"
     ],
     "lint-active": [
-      "twig-cs-fixer",
+      "twig-cs-fixer lint --fix templates/",
       "symfony composer validate --strict",
       "symfony composer normalize",
       "php-cs-fixer fix",
       "@rector"
     ],
     "lint-passive": [
+      "twig-cs-fixer lint templates/",
       "symfony composer validate --strict",
       "symfony composer normalize --dry-run --diff",
       "php-cs-fixer check --show-progress none --diff",
@@ -135,7 +136,6 @@
       "symfony check:security",
       "symfony console importmap:audit"
     ],
-    "tests": "php vendor/bin/paratest --runner WrapperRunner",
-    "twig-cs-fixer": "twig-cs-fixer lint --fix templates/"
+    "tests": "php vendor/bin/paratest --runner WrapperRunner"
   }
 }
