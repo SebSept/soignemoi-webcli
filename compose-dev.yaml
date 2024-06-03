@@ -26,7 +26,14 @@ services:
       - nginx
       - partage
     restart: unless-stopped
-    user: 0:1000
+    #    user: www-data
+    # user est défini dans le Dockerfile à www-data
+    # pour que les commandes composer et console tourne avec le bon user (php-fpm)
+    # pour continuer à modifier les fichiers avec l'utilisateur courant
+    # sudo chown seb:82 -R .
+    # sudo chmod g+w -R .
+    # de cette façon, les fichiers appartiennent à seb et au groupe www-data
+    # on peut les créer/modifier des 2 cotés
     volumes:
       - type: bind
         source: ./
