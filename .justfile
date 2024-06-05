@@ -1,7 +1,7 @@
 set dotenv-load
 docker_php_exec := "docker compose -f compose-dev.yaml exec -it php"
 composer := docker_php_exec + " composer "
-console := docker_php_exec + "console "
+console := docker_php_exec + " ./bin/console "
 docker_exec_nginx := "docker compose -f compose-dev.yaml exec -it -u root nginx"
 browser := "firefox"
 
