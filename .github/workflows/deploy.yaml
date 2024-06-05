@@ -43,6 +43,7 @@ jobs:
             if [ ! -d "/app" ]; then
               git clone --depth=1 --branch main git@github.com:SebSept/soignemoi-webcli.git /app
             fi
+            cd /app
             git fetch origin main --depth=1
             git reset --hard origin/main --
             docker compose -f compose-prod.yaml down
