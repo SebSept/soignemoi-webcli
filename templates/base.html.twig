@@ -14,25 +14,23 @@
     {% endblock %}
 </head>
 <body>
-<div class="bg-info-subtle py-3">
+<header class="bg-info-subtle py-3">
     <div class="container-fluid mt-5 mt-md-0">
         <div class="row mb-2">
             <div class="col-10 ">
-                <header>
                     <a class="dropdown-item d-flex align-items-center" href="{{ path('app_home') }}">
                         <h1 class="display-5">Hopital SoigneMoi</h1>
                     </a>
-                </header>
             </div>
             <div class="col-2 d-flex align-items-center justify-content-end">
                 {{ include('_partial/menu_' ~ app.user.role|default('visitor') ~ '.html.twig') }}
             </div>
         </div>
     </div>
-</div>
+</header>
 
 {# Partie principale #}
-<div class="container-fluid mt-2">
+<main class="container-fluid mt-2">
 
     {% block flash %}
         {# read and display all flash messages #}
@@ -47,7 +45,7 @@
     {% endblock %}
 
     {% block body %}{% endblock %}
-</div>
+</main>
 
 <footer class="bg-info-subtle p-3 mt-2">
     <div class="container-fluid">
@@ -70,7 +68,6 @@
 
             </div>
         </div>
-    </div>
     </div>
 </footer>
 </body>
