@@ -23,7 +23,7 @@ jobs:
           docker compose --progress quiet -f compose-dev.yaml up -d --build
 
       - name: composer install
-        run: docker compose -f compose-dev.yaml exec php composer install --quiet
+        run: docker compose -f compose-dev.yaml exec php composer install
 
       - name: composer ci
         run: docker compose -f compose-dev.yaml exec php composer run-script ci
