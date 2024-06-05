@@ -17,7 +17,8 @@ jobs:
         run: |
           set -e
           docker network create partage
-          chown 82:82 ./ -R # www-data user dans le contenaire php.
+          mkdir vendor
+          chown 82:82 ./vendor # www-data user dans le contenaire php.
           docker compose --progress quiet -f compose-dev.yaml up -d --build
           docker compose -f compose-dev.yaml exec php composer install --quiet
 
