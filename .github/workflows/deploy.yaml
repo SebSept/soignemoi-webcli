@@ -18,10 +18,11 @@ jobs:
         run: |
           set -e
           mkdir vendor var
-          chown 82:82 vendor var # www-data user dans le contenaire php.
           docker network create partage
           docker compose --progress quiet -f compose-dev.yaml up -d --build
-          docker compose -f compose-dev.yaml exec php composer install --quiet
+
+      - name: composer install
+        run: docker compose -f compose-dev.yaml exec php composer install --quiet
 
       - name: composer ci
         run: docker compose -f compose-dev.yaml exec php composer run-script ci
@@ -44,7 +45,7 @@ jobs:
               git clone --depth=1 --branch main git@github.com:SebSept/soignemoi-webcli.git /app
             fi
             cd /app
-            chown 82:82 ./ -R # www-data user dans le contenaire php.
+            chown 82:82 ./ -R # www-data user dans le contenaire php. - peut être restreint
             git fetch origin main --depth=1
             git reset --hard origin/main --
             docker compose -f compose-prod.yaml down
