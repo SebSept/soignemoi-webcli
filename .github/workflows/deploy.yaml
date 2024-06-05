@@ -19,10 +19,12 @@ jobs:
           set -e
           docker network create partage
           docker compose --progress quiet -f compose-dev.yaml up -d --build
-          docker compose -f compose-dev.yaml exec php composer install --quiet
+
+      - name: composer install
+        run: docker compose -f compose-dev.yaml exec -u root php composer install --quiet
 
       - name: composer ci
-        run: docker compose -f compose-dev.yaml exec php composer run-script ci
+        run: docker compose -f compose-dev.yaml exec -u root php composer run-script ci
 
   # déploiement
   deploy:
@@ -42,13 +44,13 @@ jobs:
               git clone --depth=1 --branch main git@github.com:SebSept/soignemoi-webcli.git /app
             fi
             cd /app
-            chown 82:82 ./ -R # www-data user dans le contenaire php.
             git fetch origin main --depth=1
             git reset --hard origin/main --
             docker compose -f compose-prod.yaml down
             docker compose -f compose-prod.yaml pull
             docker compose -f compose-prod.yaml up -d --build
-            docker compose -f compose-prod.yaml exec php composer install --no-dev
+            docker compose -f compose-prod.yaml exec -u root php composer install --no-dev --working-dir=/app
+            docker compose -f compose-prod.yaml exec -u root php chown www-data:www-data /app/var /app/public 
 
       - name: Check déploiement
-        run: curl --fail https://cli.ecf.seb7.fr
+        run: curl -s --fail https://cli.ecf.seb7.fr
