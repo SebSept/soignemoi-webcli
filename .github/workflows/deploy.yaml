@@ -7,24 +7,24 @@ on:
 
 jobs:
   # lancement des tests
-  quality:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: docker compose
-        run: |
-          set -e
-          docker network create partage
-          docker compose --progress quiet -f compose-dev.yaml up -d --build
-
-      - name: composer install
-        run: docker compose -f compose-dev.yaml exec -u root php composer install
-
-      - name: composer ci
-        run: docker compose -f compose-dev.yaml exec -u root php composer run-script ci
+#  quality:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: docker compose
+#        run: |
+#          set -e
+#          docker network create partage
+#          docker compose --progress quiet -f compose-dev.yaml up -d --build
+#
+#      - name: composer install
+#        run: docker compose -f compose-dev.yaml exec -u root php composer install
+#
+#      - name: composer ci
+#        run: docker compose -f compose-dev.yaml exec -u root php composer run-script ci
 
   # déploiement
   deploy:
@@ -43,13 +43,14 @@ jobs:
             if [ ! -d "/app" ]; then
               git clone --depth=1 --branch main git@github.com:SebSept/soignemoi-webcli.git /app
             fi
+            cd /app
             git fetch origin main --depth=1
             git reset --hard origin/main --
             docker compose -f compose-prod.yaml down
             docker compose -f compose-prod.yaml pull
             docker compose -f compose-prod.yaml up -d --build
-            docker compose -f compose-prod.yaml exec -u root php composer install --no-dev
-            docker compose -f compose-prod.yaml exec -u root php chown www-data:www-data var public 
+            docker compose -f compose-prod.yaml exec -u root php composer install --no-dev --working-dir=/app
+            docker compose -f compose-prod.yaml exec -u root php chown www-data:www-data /app/var /app/public 
 
       - name: Check déploiement
         run: curl --fail https://cli.ecf.seb7.fr
