@@ -14,7 +14,8 @@
     {% endblock %}
 </head>
 <body>
-<div class="container-fluid mt-5 mt-md-2">
+<div class="bg-info-subtle py-3">
+    <div class="container-fluid mt-5 mt-md-0">
         <div class="row mb-2">
             <div class="col-10 ">
                 <header>
@@ -27,6 +28,11 @@
                 {{ include('_partial/menu_' ~ app.user.role|default('visitor') ~ '.html.twig') }}
             </div>
         </div>
+    </div>
+</div>
+
+{# Partie principale #}
+<div class="container-fluid mt-2">
 
     {% block flash %}
         {# read and display all flash messages #}
@@ -42,5 +48,30 @@
 
     {% block body %}{% endblock %}
 </div>
+
+<footer class="bg-info-subtle p-3 mt-2">
+    <div class="container-fluid">
+        <div class="row d-flex flex-row align-items-center">
+            <div class="flex-column col-md-6 text-center">
+                <p>Copyrights Hopital SoigneMoi</p>
+                <p><a href="#">CGV</a></p>
+            </div>
+            <div class="flex-column col-md-6 text-center">
+                {% if app.user %}
+                    <p>
+                        {{ app.user.userIdentifier }}<br>
+                        <a href="{{ path('app_logout') }}">Déconnexion</a>
+                    </p>
+                {% else %}
+                    <p>
+                        <a href="{{ path('app_login') }}">Connexion</a>
+                    </p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    </div>
+</footer>
 </body>
 </html>
