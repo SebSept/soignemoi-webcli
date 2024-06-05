@@ -14,7 +14,7 @@
 
         <div class="flex-md-column col-md-4">
             <img
-                    src="{{ asset('images/pill.jpg') }}"
+                    src="{{ asset('images/pill.jpg') | imagine_filter('col4') }}"
                     class="img-fluid img-thumbnail"
                     alt="main avec des cachets"
                     aria-hidden="true">
@@ -43,11 +43,14 @@
     <div class="row d-flex flex-row mt-2 flex-md-row-reverse">
 
         <div class="flex-column col-md-4">
-            <img
-                    src="{{ asset('images/steh.jpg') }}"
-                    class="img-fluid img-thumbnail"
-                    alt="main avec des cachets"
-                    aria-hidden="true">
+            <picture>
+                <img
+                        src="{{ asset('images/steh.jpg') | imagine_filter('fullwidth_fallback') }}"
+                        class="img-fluid img-thumbnail"
+                        alt="main avec des cachets"
+                        aria-hidden="true">
+            </picture>
+
         </div>
 
         <div class="flex-column col-md-8">

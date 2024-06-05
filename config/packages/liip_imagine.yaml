@@ -2,3 +2,33 @@
 liip_imagine:
     # valid drivers options include "gd" or "gmagick" or "imagick"
     driver: "imagick"
+
+    # configure resolvers
+    resolvers:
+
+        # setup the default resolver
+        default:
+
+            # use the default web path
+            web_path: ~
+
+    filter_sets:
+        cache: ~
+
+        col4:
+            format: webp
+            quality: 80
+            filters:
+                thumbnail: { size: [ 408, 272 ], mode: inset }
+
+        fullwidth:
+            format: webp
+            quality: 80
+            filters:
+                thumbnail: { size: [ 730, 487 ], mode: inset }
+
+        fullwidth_fallback:
+            format: jpg
+            quality: 70
+            filters:
+                thumbnail: { size: [ 730, 487 ], mode: inset }
