@@ -20,6 +20,7 @@ jobs:
           set -e
           docker network create partage
           mkdir vendor var
+          chmod a+w vendor var
           docker compose --progress quiet -f compose-dev.yaml up -d --build
           docker compose -f compose-dev.yaml exec php composer install --quiet
 

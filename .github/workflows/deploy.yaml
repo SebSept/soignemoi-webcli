@@ -17,8 +17,6 @@ jobs:
       - name: docker compose
         run: |
           set -e
-          mkdir vendor var
-          chmod a+w vendor var
           docker network create partage
           docker compose --progress quiet -f compose-dev.yaml up -d --build
 
