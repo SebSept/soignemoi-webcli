@@ -12,11 +12,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: 'main'
 
       - name: Docker compose
         run: |
           set -e
           docker network create partage
+          mkdir vendor var
+          chmod a+w vendor var
           docker compose --progress quiet -f compose-dev.yaml up -d --build
           docker compose -f compose-dev.yaml exec -u root php chown www-data /app -R
 
