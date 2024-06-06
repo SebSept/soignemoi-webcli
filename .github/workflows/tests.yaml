@@ -26,7 +26,7 @@ jobs:
         run: docker compose -f compose-dev.yaml exec php composer install --quiet
 
       - name: Check composer version
-        run: docker compose -f compose-dev.yaml exec -it php /app/check_composer.sh
+        run: docker compose -f compose-dev.yaml exec php /app/check_composer.sh
 
       - name: Composer ci
         run: docker compose -f compose-dev.yaml exec php composer run-script ci
