@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 version=$(composer --version |  awk '{print $3}')
 echo "Composer version extracted : $version"
 echo "Querying OSV API for Composer vulnerabilities... (exit code is the result)"

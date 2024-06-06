@@ -6,7 +6,7 @@ on:
       - dev
 
 jobs:
-  quality:
+  quality-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,17 +15,18 @@ jobs:
         with:
           ref: 'main'
 
-      - name: deploy code and containers
+      - name: Docker compose
         run: |
           set -e
           docker network create partage
-          mkdir vendor var
-          chmod a+w vendor var
           docker compose --progress quiet -f compose-dev.yaml up -d --build
-          docker compose -f compose-dev.yaml exec php composer install --quiet
+          docker compose -f compose-dev.yaml exec -u root php chown www-data /app -R
 
-      - name: check composer version
-        run: docker compose -f compose-dev.yaml exec -it php /app/check_composer.sh
+      - name: Install Composer
+        run: docker compose -f compose-dev.yaml exec php composer install --quiet
 
-      - name: composer ci
+      - name: Check composer version
+        run: docker compose -f compose-dev.yaml exec php sh /app/check_composer.sh
+
+      - name: Composer ci
         run: docker compose -f compose-dev.yaml exec php composer run-script ci

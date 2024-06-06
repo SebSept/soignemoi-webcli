@@ -7,6 +7,7 @@ on:
 
 jobs:
   # lancement des tests
+  # dupliqué dans security.yaml
   quality:
     runs-on: ubuntu-latest
 
@@ -14,17 +15,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: docker compose
+      - name: Docker compose
         run: |
           set -e
           docker network create partage
           docker compose --progress quiet -f compose-dev.yaml up -d --build
+          docker compose -f compose-dev.yaml exec -u root php chown www-data /app -R
 
-      - name: composer install
-        run: docker compose -f compose-dev.yaml exec -u root php composer install
+      - name: Install Composer
+        run: docker compose -f compose-dev.yaml exec php composer install --quiet
 
-      - name: composer ci
-        run: docker compose -f compose-dev.yaml exec -u root php composer run-script ci
+      - name: Check composer version
+        run: docker compose -f compose-dev.yaml exec php /app/check_composer.sh
+
+      - name: Composer ci
+        run: docker compose -f compose-dev.yaml exec php composer run-script ci
 
   # déploiement
   deploy:
@@ -50,7 +55,7 @@ jobs:
             docker compose -f compose-prod.yaml pull
             docker compose -f compose-prod.yaml up -d --build
             docker compose -f compose-prod.yaml exec -u root php composer install --no-dev --working-dir=/app
-            docker compose -f compose-prod.yaml exec -u root php chown www-data:www-data /app/var /app/public 
+            docker compose -f compose-prod.yaml exec -u root php chown www-data:www-data /app/var /app/public
 
       - name: Check déploiement
-        run: curl --fail https://cli.ecf.seb7.fr
+        run: curl -s --fail https://cli.ecf.seb7.fr

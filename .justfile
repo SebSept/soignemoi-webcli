@@ -1,7 +1,7 @@
 set dotenv-load
 docker_php_exec := "docker compose -f compose-dev.yaml exec -it php"
 composer := docker_php_exec + " composer "
-console := docker_php_exec + "console "
+console := docker_php_exec + " ./bin/console "
 docker_exec_nginx := "docker compose -f compose-dev.yaml exec -it -u root nginx"
 browser := "firefox"
 
@@ -94,7 +94,7 @@ pre-commit:
 [confirm("Écraser .git/hooks/pre-commit ?")]
 install-pre-commit-hook:
     echo "docker compose -f compose-dev.yaml exec php composer run-script pre-commit" > .git/hooks/pre-commit
-    {{docker_php_exec}} chmod +x .git/hooks/pre-commit
+    chmod +x .git/hooks/pre-commit
 
 # firt run docker compose up + composer install + open browser
 #[confirm("review settings in .env before continue")]
