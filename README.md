@@ -58,3 +58,10 @@ docker compose -f compose-dev.yaml exec -it php ./bin/console doctrine:database:
 docker compose -f compose-dev.yaml exec -it php ./bin/console doctrine:schema:create --quiet --no-interaction
 docker compose -f compose-dev.yaml exec -it php ./bin/console doctrine:fixture:load --no-interaction
 ```
+
+## Identifiants de connexion
+
+Les identifiants de connexion sont définis dans les fixture (coté api).
+- patient@patient.com : hello
+- secretaire@secretaire.com : hello
+- doctor@doctor.com : hello
