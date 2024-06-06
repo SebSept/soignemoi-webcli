@@ -65,3 +65,21 @@ Les identifiants de connexion sont définis dans les fixture (coté api).
 - patient@patient.com : hello
 - secretaire@secretaire.com : hello
 - doctor@doctor.com : hello
+
+## Charte Graphique
+
+@todo
+
+## Gestion de projet
+
+@todo
+
+## Documentation technique
+
+- Reflexion initiale technologique initiales sur le sujet @todo
+- Configuration de l'env de travail @todo
+- MCD @todo
+- Diagramme d'utilisation @todo
+- Plan de test @todo
+
+Kanban : lien donné dans la copie. @todo : remettre ici
