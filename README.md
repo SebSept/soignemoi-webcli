@@ -51,7 +51,7 @@ La base de données est sur un volume docker persistant.
 ### Avec _just_
 `just db-create db-fixtures-load`
 
-###Sans _just_
+### Sans _just_
 ```shell
 docker compose -f compose-dev.yaml exec -it php ./bin/console doctrine:database:drop --quiet --no-interaction --if-exists --force
 docker compose -f compose-dev.yaml exec -it php ./bin/console doctrine:database:create --quiet --no-interaction
@@ -72,7 +72,18 @@ Les identifiants de connexion sont définis dans les fixture (coté api).
 
 ## Gestion de projet
 
-@todo
+J'ai opéré une gestion de projet relativement classique, avec les phases suivantes :
+
+1. Pré-démarrage ([livrable](https://github.com/SebSept/ecf-docs/blob/main/livrables/1.pr%C3%A9d%C3%A9marrage.odt)) 
+2. Cadrage ([livrable](https://github.com/SebSept/ecf-docs/blob/main/livrables/2.cadrage.odt))
+3. Spécifications fonctionnelles, planification & chiffrage ([cahier des charges](https://github.com/SebSept/ecf-docs/blob/main/livrables/documents/cahier%20des%20charges%20v2.odt), [roadmap](https://github.com/SebSept/ecf-docs/blob/main/livrables/documents/Roadmap.gan), [planning](https://github.com/SebSept/ecf-docs/blob/main/livrables/documents/Planing.gan))
+4. Conception technique ([livrables](https://github.com/SebSept/ecf-docs/tree/main/livrables/4.conception%20technique))
+5. Réalisation technique
+6. Tests et correctifs
+7. Mise en production, formation, maintenance
+8. Garanties
+
+[depot dédié aux documents](https://github.com/SebSept/ecf-docs).
 
 ## Documentation technique
 
