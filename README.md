@@ -41,3 +41,20 @@ En cas de problème, référez-vous au worflow de déploiement GitHub Actions : 
 ---
 
 Le projet est accessible à l'adresse http://localhost:$NGINX_PORT (voir fichier _.env_) (ou simplement avec la commande `just browser`).
+
+## Création de la base de données
+
+Pas de base de données pour le client.  
+Seule l'API nécessite une base de données.
+
+La base de données est sur un volume docker persistant.  
+### Avec _just_
+`just db-create db-fixtures-load`
+
+###Sans _just_
+```shell
+docker compose -f compose-dev.yaml exec -it php ./bin/console doctrine:database:drop --quiet --no-interaction --if-exists --force
+docker compose -f compose-dev.yaml exec -it php ./bin/console doctrine:database:create --quiet --no-interaction
+docker compose -f compose-dev.yaml exec -it php ./bin/console doctrine:schema:create --quiet --no-interaction
+docker compose -f compose-dev.yaml exec -it php ./bin/console doctrine:fixture:load --no-interaction
+```
