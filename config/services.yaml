@@ -32,3 +32,17 @@ services:
     App\Service\SoigneMoiApiService:
         arguments:
             $apiUrl: '%env(API_URL)%'
+
+    monolog.logger.api_errors:
+        class: Monolog\Logger
+        arguments: ['apiErrorsLogger']
+        calls:
+            - method: pushHandler
+              arguments:
+                  - '@monolog.handler.api_errors'
+
+    monolog.handler.api_errors:
+        class: Monolog\Handler\StreamHandler
+        arguments:
+            - '%kernel.logs_dir%/api_errors.log'
+            - 'debug'
