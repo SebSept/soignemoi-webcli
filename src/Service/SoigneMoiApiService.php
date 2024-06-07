@@ -25,6 +25,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -88,7 +89,8 @@ class SoigneMoiApiService
         private readonly Security $security,
         private readonly HttpClientInterface $httpClient,
         private readonly string $apiUrl, // chaine sans 'api/' car on fait la demande de token au dessous.
-        private readonly LoggerInterface $logger,
+        #[Autowire(service: 'monolog.logger.api_errors')]
+        private readonly LoggerInterface $apiErrorsLogger,
     ) {
         $this->serializer = new Serializer(
             [
@@ -119,7 +121,7 @@ class SoigneMoiApiService
                 ]);
 
             if (200 !== $response->getStatusCode()) {
-                $this->logger->critical(
+                $this->apiErrorsLogger->critical(
                     'Essait d\'authentification ratée.', [
                         'responseCode' => $response->getStatusCode(),
                         'responseContent' => $response->getContent(),
@@ -370,7 +372,7 @@ class SoigneMoiApiService
                 ],
             ]);
 
-        $this->handleNonOkResponse($response);
+        $this->handleNonOkResponse($response, 'GET', $this->apiUrl.sprintf($url, $id));
 
         return $this->serializer->deserialize($response->getContent(), $type, 'json');
     }
@@ -389,7 +391,7 @@ class SoigneMoiApiService
             'json' => $data,
         ]);
 
-        $this->handleNonOkResponse($response);
+        $this->handleNonOkResponse($response, 'PATCH', [$this->apiUrl.sprintf($url, $id), $data]);
     }
 
     /**
@@ -406,7 +408,7 @@ class SoigneMoiApiService
             'json' => $data,
         ]);
 
-        $this->handleNonOkResponse($response);
+        $this->handleNonOkResponse($response, 'POST', [$url, $data]);
     }
 
     private function getPatientIri(?Patient $patient): string
@@ -446,7 +448,13 @@ class SoigneMoiApiService
         return $dateTime->format('c');
     }
 
-    private function handleNonOkResponse(ResponseInterface $response): void
+    /**
+     * @param string|array<int, mixed> $payload
+     */
+    private function handleNonOkResponse(
+        ResponseInterface $response,
+        string $method,
+        string|array $payload): void
     {
         $statusCode = $response->getStatusCode();
         $responseContent = $response->getContent(false); // false pour ne pas lever d'exception.
@@ -459,10 +467,20 @@ class SoigneMoiApiService
             $jsonResponseContent = new stdClass();
         }
 
-        // inspiré de \Symfony\Component\HttpClient\Response\CommonResponseTrait::checkStatusCode
+        // Inspiré de \Symfony\Component\HttpClient\Response\CommonResponseTrait::checkStatusCode
+        // les réponses inférieures à 300 sont considérées comme des succès.
         if ($statusCode < 300) {
             return;
         }
+
+        // log la requete fautive
+        // @todo par la suite ne pas logger les requetes liées aux autorisations
+        $this->apiErrorsLogger->critical('Erreur API {statusCode}. ', [
+            'statusCode' => $statusCode,
+            'responseContent' => $responseContent,
+            'method' => $method,
+            'requestPayload' => $payload,
+        ]);
 
         // 400 - erreur de validation avec message
         if (Response::HTTP_BAD_REQUEST === $statusCode) {
