@@ -14,7 +14,7 @@
 
         <div class="flex-md-column col-md-4">
             <img
-                    src="{{ asset('images/pill.jpg') | imagine_filter('col4') }}"
+                    src="{{ asset('images/pill.jpg'|imagine_filter('col4')) }}"
                     class="img-fluid img-thumbnail"
                     alt="main avec des cachets"
                     aria-hidden="true">
@@ -43,11 +43,24 @@
     <div class="row d-flex flex-row mt-2 flex-md-row-reverse">
 
         <div class="flex-column col-md-4">
+
             <picture>
+                <source
+                        media="(min-width: 422px) and (max-width: 767px)"
+                        srcset="{{ asset('images/steh.jpg'|imagine_filter('fullwidth')) }}"
+                        type="image/webp"
+                >
+                <source
+                        media="(max-width: 422px) or (min-width: 767px)"
+                        srcset="{{ asset('images/steh.jpg'|imagine_filter('col4')) }}"
+                        type="image/webp"
+                >
                 <img
-                        src="{{ asset('images/steh.jpg') | imagine_filter('fullwidth_fallback') }}"
+                        src="{{ asset('images/steh.jpg'|imagine_filter('fullwidth_fallback')) }}"
                         class="img-fluid img-thumbnail"
                         alt="main avec des cachets"
+                        width="730"
+                        height="487"
                         aria-hidden="true">
             </picture>
 
