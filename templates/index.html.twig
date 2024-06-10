@@ -13,11 +13,25 @@
     <div class="row d-flex flex-row">
 
         <div class="flex-md-column col-md-4">
-            <img
-                    src="{{ asset('images/pill.jpg') }}"
-                    class="img-fluid img-thumbnail"
-                    alt="main avec des cachets"
-                    aria-hidden="true">
+            <picture>
+                <source
+                        media="(min-width: 422px) and (max-width: 767px)"
+                        srcset="{{ asset('images/pills-fullwidth.jpg') }}"
+                        type="image/webp"
+                >
+                <source
+                        media="(max-width: 422px) or (min-width: 767px)"
+                        srcset="{{ asset('images/pills-col4.jpg') }}"
+                        type="image/webp"
+                >
+                <img
+                        src="{{ asset('images/pills-fullwidth_fallback.jpg') }}"
+                        class="img-fluid img-thumbnail"
+                        alt="main avec des cachets"
+                        width="730"
+                        height="487"
+                        aria-hidden="true">
+            </picture>
         </div>
 
         <div class="flex-md-column col-md-8">
@@ -43,11 +57,27 @@
     <div class="row d-flex flex-row mt-2 flex-md-row-reverse">
 
         <div class="flex-column col-md-4">
-            <img
-                    src="{{ asset('images/steh.jpg') }}"
-                    class="img-fluid img-thumbnail"
-                    alt="main avec des cachets"
-                    aria-hidden="true">
+
+            <picture>
+                <source
+                        media="(min-width: 422px) and (max-width: 767px)"
+                        srcset="{{ asset('images/steh-fullwidth.jpg') }}"
+                        type="image/webp"
+                >
+                <source
+                        media="(max-width: 422px) or (min-width: 767px)"
+                        srcset="{{ asset('images/steh-col4.jpg') }}"
+                        type="image/webp"
+                >
+                <img
+                        src="{{ asset('images/steh-fullwidth_fallback.jpg') }}"
+                        class="img-fluid img-thumbnail"
+                        alt="main avec des cachets"
+                        width="730"
+                        height="487"
+                        aria-hidden="true">
+            </picture>
+
         </div>
 
         <div class="flex-column col-md-8">

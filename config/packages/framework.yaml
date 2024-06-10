@@ -8,6 +8,8 @@ framework:
 
     #esi: true
     #fragments: true
+#    assets:
+#        version: 21
 
 when@test:
     framework:
