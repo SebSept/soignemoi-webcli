@@ -4,7 +4,6 @@
 liip_imagine:
     # valid drivers options include "gd" or "gmagick" or "imagick"
     driver: "gmagick"
-    driver: "gmagick"
     loaders:
         default:
             filesystem:
