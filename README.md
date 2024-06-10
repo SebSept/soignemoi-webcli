@@ -117,9 +117,9 @@ On a ainsi uniquement Docker, Docker Compose et git à installer sur la machine 
 
 ### MCD - Modèle Conceptuel de Données
 
-J'ai réalisé un diagramme de classe.  
-Je n'ai pas réalisé de MCD, car Doctrine génère ce qui concerne les tables de la base de données.  
-Je vais réaliser ce diagramme prochainement pour la documentation.
+Le diagrame MCD à été généré a posterio, car Doctrine génère ce qui concerne les tables de la base de données.  
+
+Le diagramme est inclu dans le document, [Conception technique](https://github.com/SebSept/ecf-docs/blob/main/livrables/4.conception%20technique/Conception%20technique.odt).
 
 Il sera aussi pertinent d'offir une représentation des données de l'api (api platform offre ces possibilités).
 
