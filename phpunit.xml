@@ -20,9 +20,6 @@
     <testsuite name="service">
       <directory>tests/Service/</directory>
     </testsuite>
-    <!--        <testsuite name="security">-->
-    <!--            <directory>tests/Security/</directory>-->
-    <!--        </testsuite>-->
   </testsuites>
   <extensions>
     <bootstrap class="Zenstruck\Browser\Test\BrowserExtension"/>
