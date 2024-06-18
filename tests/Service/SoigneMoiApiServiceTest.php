@@ -84,6 +84,35 @@ class SoigneMoiApiServiceTest extends KernelTestCase
         $api->postHospitalStay($hospitalStay);
     }
 
+    public function testAuthTokenIsSent(): void
+    {
+        // les tests sont réalisés au moment de la création des requetes,
+        // dans les callbacks définis ici
+        $testExpectedApiCalls = [
+            function ($method, $url, array $options): MockResponse {
+                $headers = $options['normalized_headers'];
+                 // Assert
+                $this->assertSame('GET', $method);
+                $this->assertContains('Authorization: Bearer 123', $headers['authorization'], 'debogage : contenus : '.var_export($headers, true));
+
+                return new MockResponse(
+                    json_encode(['rien' => 'sans aucune importance, non testé']),
+                    ['http_code' => Response::HTTP_OK] // important sinon, exception est levée
+                );
+            }
+        ];
+
+        $httpClient = new MockHttpClient($testExpectedApiCalls);
+
+        static::getContainer()->set(HttpClientInterface::class, $httpClient);
+        static::getContainer()->set(Security::class, $this->getMockedSecurity());
+
+        // Act
+        /** @var SoigneMoiApiService $api */
+        $api = static::getContainer()->get(SoigneMoiApiService::class);
+        $api->getDoctors();
+    }
+
     /**
      * @return (object&MockObject)|MockObject|Security|(Security&object&MockObject)|(Security&MockObject)
      */
