@@ -49,15 +49,18 @@ class SoigneMoiApiServiceTest extends KernelTestCase
             doctor: new Doctor(4)
         );
 
-        $httpClient = new MockHttpClient();
         // les tests sont réalisés au moment de la création des requetes,
         // dans les callbacks définis ici
         $testExpectedApiCalls = [
             function ($method, $url, array $options): MockResponse {
                 $body = $options['body'];
                  // Assert
+                // tests basiques
                 $this->assertSame('POST', $method);
                 $this->assertJson($body);
+                // tests sur les contenus
+                $this->assertStringContainsString('"startDate":"2025-12-07', $body);
+                $this->assertStringContainsString('"endDate":"2025-12-14', $body);
                 $this->assertStringContainsString('"doctor":"\/api\/doctors\/4"', $body);
                 $this->assertStringContainsString('"patient":"\/api\/patients\/7"', $body);
                 $this->assertStringContainsString('"medicalSpeciality":"la specialite"', $body);
