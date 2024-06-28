@@ -87,6 +87,10 @@ sql query env='dev':
 psysh:
     {{docker_php_exec}} psysh
 
+fix-rights:
+    sudo chown seb:www-data ./ -R
+    sudo chmod g+w ./ -R
+
 pre-commit:
     {{composer}} run-script pre-commit
 
