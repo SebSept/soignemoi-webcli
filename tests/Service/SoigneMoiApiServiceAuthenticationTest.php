@@ -2,15 +2,45 @@
 
 namespace App\Tests\Service;
 
+use App\Tests\KernelTestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Service\SoigneMoiApiService;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
 {
+    public function testAuthTokenIsSent(): void
+    {
+        // les tests sont réalisés au moment de la création des requetes,
+        // dans les callbacks définis ici
+        $testExpectedApiCalls = [
+            function ($method, $url, array $options): MockResponse {
+                $headers = $options['normalized_headers'];
+                // Assert
+                $this->assertSame('GET', $method);
+                $this->assertContains('Authorization: Bearer 123', $headers['authorization'], 'debogage : contenus : '.var_export($headers, true));
+
+                return new MockResponse(
+                    json_encode(['rien' => 'sans aucune importance, non testé']),
+                    ['http_code' => Response::HTTP_OK] // important sinon, exception est levée
+                );
+            }
+        ];
+
+        $httpClient = new MockHttpClient($testExpectedApiCalls);
+
+        static::getContainer()->set(HttpClientInterface::class, $httpClient);
+        static::getContainer()->set(Security::class, $this->getMockedSecurity());
+
+        // Act
+        /** @var SoigneMoiApiService $api */
+        $api = static::getContainer()->get(SoigneMoiApiService::class);
+        $api->getDoctors();
+    }
+
     public function testAuthenticationFailsIfUnAuthorized(): void
     {
         // Arrange
