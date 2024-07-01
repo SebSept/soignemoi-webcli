@@ -17,24 +17,29 @@ use App\Entity\MedicalOpinion;
 use App\Entity\Patient;
 use App\Entity\Prescription;
 use App\Security\User;
+use App\Service\Exception\AuthenticationFailure;
+use App\Service\Exception\AuthorizationFailure;
+use App\Service\Exception\InvalidContentFailure;
+use App\Service\Exception\UnexpectedApiFailure;
 use DateTime;
 use DateTimeInterface;
 use Exception;
 use JsonException;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -134,28 +139,26 @@ class SoigneMoiApiService
             $json = json_decode($response->getContent(), flags: JSON_THROW_ON_ERROR);
             $token = $json->accessToken ?? null;
             if (is_null($token)) {
-                throw new RuntimeException('no accessToken field');
+                throw new AuthenticationFailure('no accessToken field');
             }
 
             $role = $json->role ?? null;
             if (is_null($role)) {
-                throw new RuntimeException('no Role field');
+                throw new AuthorizationFailure('no Role field');
             }
 
             $id = $json->id ?? null;
             // secrétaire et admin n'ont pas d'id.
             if (!in_array($role, self::ALLOWED_ROLES_WITHOUT_ID) && is_null($id)) {
-                throw new RuntimeException('no id field '.var_export(json_encode($json), true));
+                throw new AuthenticationFailure('no id field '.var_export(json_encode($json), true));
             }
 
             if (!in_array($role, self::ALLOWED_ROLES)) {
-                throw new InvalidRoleException('Expected role "'.$role.'"');
+                throw new AuthorizationFailure('Unexpected role "'.$role.'"');
             }
         } catch (Exception) {
             return new ApiResponse(false);
         }
-
-        // $this->token = $token;
 
         return new ApiResponse(true, $token, $role, $id);
     }
@@ -328,7 +331,7 @@ class SoigneMoiApiService
             $user = $this->security->getUser();
             $token = $user?->getToken() ?? '';
             if (empty($token)) {
-                throw new AccessDeniedException();
+                throw new AuthorizationFailure('User sans token !');
             }
 
             $this->token = $token;
@@ -344,7 +347,7 @@ class SoigneMoiApiService
             $user = $this->security->getUser();
             $userId = $user?->getId() ?? null;
             if (is_null($userId)) {
-                throw new AccessDeniedException();
+                throw new AuthorizationFailure('UserId null !');
             }
 
             $this->userId = $userId;
@@ -359,6 +362,12 @@ class SoigneMoiApiService
      * @param class-string<T> $type
      *
      * @return T
+     *
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     private function getRequest(string $url, int $id, string $type): mixed
     {
@@ -372,9 +381,13 @@ class SoigneMoiApiService
                 ],
             ]);
 
-        $this->handleNonOkResponse($response, 'GET', $this->apiUrl.sprintf($url, $id));
+        $this->abortOnNonOkResponse($response, 'GET', $this->apiUrl.sprintf($url, $id));
 
-        return $this->serializer->deserialize($response->getContent(), $type, 'json');
+        try {
+            return $this->serializer->deserialize($response->getContent(), $type, 'json');
+        } catch (Exception $exception) {
+            throw new UnexpectedApiFailure($exception->getMessage(), $exception->getCode(), $exception);
+        }
     }
 
     /**
@@ -391,7 +404,7 @@ class SoigneMoiApiService
             'json' => $data,
         ]);
 
-        $this->handleNonOkResponse($response, 'PATCH', [$this->apiUrl.sprintf($url, $id), $data]);
+        $this->abortOnNonOkResponse($response, 'PATCH', [$this->apiUrl.sprintf($url, $id), $data]);
     }
 
     /**
@@ -408,7 +421,7 @@ class SoigneMoiApiService
             'json' => $data,
         ]);
 
-        $this->handleNonOkResponse($response, 'POST', [$url, $data]);
+        $this->abortOnNonOkResponse($response, 'POST', [$url, $data]);
     }
 
     private function getPatientIri(?Patient $patient): string
@@ -451,12 +464,15 @@ class SoigneMoiApiService
     /**
      * @param string|array<int, mixed> $payload
      */
-    private function handleNonOkResponse(
+    private function abortOnNonOkResponse(
         ResponseInterface $response,
         string $method,
         string|array $payload): void
     {
         $statusCode = $response->getStatusCode();
+
+        // traitement du contenu pour l'ajouter au logs.
+        // traitement pour obtenir un contenu json valide dans $jsonResponseContent
         $responseContent = $response->getContent(false); // false pour ne pas lever d'exception.
         try {
             $jsonResponseContent = json_decode($responseContent, flags: JSON_THROW_ON_ERROR);
@@ -467,13 +483,15 @@ class SoigneMoiApiService
             $jsonResponseContent = new stdClass();
         }
 
+        // fin traitement contenus
+
         // Inspiré de \Symfony\Component\HttpClient\Response\CommonResponseTrait::checkStatusCode
-        // les réponses inférieures à 300 sont considérées comme des succès.
+        // les réponses inférieures à 300 sont des succès.
         if ($statusCode < 300) {
             return;
         }
 
-        // log la requete fautive
+        // log la requête et la réponse
         // @todo par la suite ne pas logger les requetes liées aux autorisations
         $this->apiErrorsLogger->critical('Erreur API {statusCode}. ', [
             'statusCode' => $statusCode,
@@ -482,28 +500,27 @@ class SoigneMoiApiService
             'requestPayload' => $payload,
         ]);
 
-        // 400 - erreur de validation avec message
+        // erreur de validation apiplatform, avec message - 400
         if (Response::HTTP_BAD_REQUEST === $statusCode) {
-            throw new ApiValidationException('Erreur de validation : requete incorrecte'.$jsonResponseContent->detail);
+            throw new InvalidContentFailure($jsonResponseContent->detail);
         }
 
         // erreur du validation Symfony - 422
         if (Response::HTTP_UNPROCESSABLE_ENTITY === $statusCode) {
-            //            dd($responseContent);
-            // @todo vérifier les contenus
-            throw new ApiValidationException('Erreur de validation (2) : '.json_decode($responseContent, flags: JSON_THROW_ON_ERROR)->detail);
+            // @todo vérifier les contenus pour envoyer réponse propre.
+            throw new InvalidContentFailure('Erreur de validation (2) : '.json_decode($responseContent, flags: JSON_THROW_ON_ERROR)->detail);
         }
 
-        // non loggé - 401
+        // non authentifié - 401
         if (Response::HTTP_UNAUTHORIZED === $response->getStatusCode()) {
-            throw new BadCredentialsException();
+            throw new AuthenticationFailure();
         }
 
-        // non authorisé (loggé) - 403
+        // non authorisé  - 403
         if (Response::HTTP_FORBIDDEN === $response->getStatusCode()) {
-            throw new AccessDeniedException('Accès api interdit.');
+            throw new AuthorizationFailure();
         }
 
-        throw new RuntimeException('Code réponse inatendu :'.$response->getStatusCode());
+        throw new UnexpectedApiFailure('Code réponse inatendu :'.$response->getStatusCode());
     }
 }

@@ -9,13 +9,12 @@ declare(strict_types=1);
  * 2024
  */
 
-namespace App\Service;
+namespace App\Service\Exception;
 
 /**
  * Class ApiValidationException.
- *
- * Données soumisses à l'api invalides.
+ * Les données envoyées à l'api sont invalides.
  */
-class ApiValidationException extends ApiException
+class InvalidContentFailure extends ApiException
 {
 }

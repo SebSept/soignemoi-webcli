@@ -9,15 +9,14 @@ declare(strict_types=1);
  * 2024
  */
 
-namespace App\Service;
+namespace App\Service\Exception;
 
 /**
  * Class UnexpectedApiException
  * Erreur d'api inattendue.
- *
  * Il doit y avoir un dysfonctionnement.
  * N'est pas une exception liée à la validation des données.
  */
-class UnexpectedApiException extends ApiException
+class UnexpectedApiFailure extends ApiException
 {
 }

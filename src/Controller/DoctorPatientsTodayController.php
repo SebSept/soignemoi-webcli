@@ -17,7 +17,7 @@ use App\Entity\Patient;
 use App\Entity\Prescription;
 use App\Form\Type\MedicalOpinionType;
 use App\Form\Type\PrescriptionType;
-use App\Service\ApiValidationException;
+use App\Service\Exception\InvalidContentFailure;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -122,7 +122,7 @@ class DoctorPatientsTodayController extends AbstractController
                 'success',
                 'Modifications enregistrées.'
             );
-        } catch (ApiValidationException $validationException) {
+        } catch (InvalidContentFailure $validationException) {
             $this->addFlash(
                 'danger',
                 $validationException->getMessage()
