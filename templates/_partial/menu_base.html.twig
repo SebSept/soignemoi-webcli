@@ -2,9 +2,13 @@
     <div class="dropdown">
         <button
                 class="btn btn-outline-primary d-flex align-items-center p-2"
+                id="dropdownMenuButton"
                 type="button"
                 data-bs-toggle="dropdown"
+                aria-haspopup="true"
                 aria-expanded="false"
+                aria-controls="dropdownMenu"
+                aria-label="Menu"
         >
             <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +21,7 @@
             </svg>
         </button>
 
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu" id="dropdownMenu" aria-labelledby="dropdownMenuButton">
 
         <li>
             <a class="dropdown-item d-flex align-items-center" href="{{ path('app_home') }}">

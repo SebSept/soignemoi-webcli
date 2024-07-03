@@ -2,6 +2,10 @@ div.container-fluid {
     max-width: 80rem;
 }
 
+footer a {
+    color:#0248B1; /* plus foncé que la normale pour l'accessibilité dans le footer */
+}
+
 body {
     display: grid;
     grid-template-columns: 1fr;
