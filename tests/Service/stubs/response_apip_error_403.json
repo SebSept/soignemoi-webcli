@@ -1,0 +1,6 @@
+{
+  "title": "An error occurred",
+  "detail": "Access Denied.",
+  "status": 403,
+  "type": "\/errors\/403"
+}

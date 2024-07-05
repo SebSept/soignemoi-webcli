@@ -20,6 +20,7 @@ use App\Security\User;
 use App\Service\Exception\AuthenticationFailure;
 use App\Service\Exception\AuthorizationFailure;
 use App\Service\Exception\InvalidContentFailure;
+use App\Service\Exception\NotFoundFailure;
 use App\Service\Exception\UnexpectedApiFailure;
 use DateTime;
 use DateTimeInterface;
@@ -309,6 +310,7 @@ class SoigneMoiApiService
 
     public function postHospitalStay(HospitalStay $hospitalStay): void
     {
+        //        throw new \Exception('trace');
         // nécessite la désactivation d'une régle rector
         // https://github.com/symplify/phpstan-rules/blob/main/docs/rules_overview.md#checktypehintcallertyperule
         $data = (array) $hospitalStay;
@@ -502,23 +504,28 @@ class SoigneMoiApiService
 
         // erreur de validation apiplatform, avec message - 400
         if (Response::HTTP_BAD_REQUEST === $statusCode) {
-            throw new InvalidContentFailure($jsonResponseContent->detail);
+            throw new InvalidContentFailure($jsonResponseContent->title.' : '.$jsonResponseContent->detail);
         }
 
         // erreur du validation Symfony - 422
         if (Response::HTTP_UNPROCESSABLE_ENTITY === $statusCode) {
-            // @todo vérifier les contenus pour envoyer réponse propre.
             throw new InvalidContentFailure('Erreur de validation (2) : '.json_decode($responseContent, flags: JSON_THROW_ON_ERROR)->detail);
         }
 
         // non authentifié - 401
         if (Response::HTTP_UNAUTHORIZED === $response->getStatusCode()) {
-            throw new AuthenticationFailure();
+            $message = $response->getHeaders(false)['www-authenticate'][0] ?? 'no www-authenticate header response';
+            throw new AuthenticationFailure($message);
         }
 
-        // non authorisé  - 403
+        // non authorisé - 403
         if (Response::HTTP_FORBIDDEN === $response->getStatusCode()) {
-            throw new AuthorizationFailure();
+            throw new AuthorizationFailure($jsonResponseContent->title.' : '.$jsonResponseContent->detail);
+        }
+
+        // non trouvé  - 404
+        if (Response::HTTP_NOT_FOUND === $response->getStatusCode()) {
+            throw new NotFoundFailure();
         }
 
         throw new UnexpectedApiFailure('Code réponse inatendu :'.$response->getStatusCode());

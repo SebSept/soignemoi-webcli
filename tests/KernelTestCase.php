@@ -38,7 +38,8 @@ class KernelTestCase extends SymfonyKernelTestCase
      */
     protected function prepareHttpResponse(
         string $jsonFilePath,
-        int    $httpCode = Response::HTTP_OK
+        int    $httpCode = Response::HTTP_OK,
+        array $headers = []
     ): void
     {
         $httpClient = new MockHttpClient();
@@ -50,7 +51,10 @@ class KernelTestCase extends SymfonyKernelTestCase
 
         $mockResponse = new MockResponse(
             $body,
-            ['http_code' => $httpCode]
+            [
+                'http_code' => $httpCode,
+                'response_headers' => $headers
+            ]
         );
         $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
 

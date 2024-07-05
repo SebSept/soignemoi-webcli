@@ -50,7 +50,7 @@ class PostPatientHospitalStaysTest extends KernelTestCase
 
                 return new MockResponse(
                     'sans aucune importance, non testé',
-                    ['http_code' => Response::HTTP_OK] // important sinon, exception est levée
+                    ['http_code' => Response::HTTP_OK]
                 );
             }
         ];

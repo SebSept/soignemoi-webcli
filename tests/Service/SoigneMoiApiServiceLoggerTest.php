@@ -25,7 +25,7 @@ class SoigneMoiApiServiceLoggerTest extends KernelTestCase
 
         // Mock Http response
         $mockResponse = new MockResponse(
-            json_encode(['lacharge' => 'recue']),
+            json_encode(['lacharge' => 'recue', 'title' => 'le titre d erreur', 'detail' => 'c interdit']),
             ['http_code' => Response::HTTP_FORBIDDEN]
         );
         $httpClient = new MockHttpClient();
