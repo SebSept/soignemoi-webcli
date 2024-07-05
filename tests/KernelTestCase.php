@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use JsonException;
 use Exception;
 use App\Security\User;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -33,21 +34,35 @@ class KernelTestCase extends SymfonyKernelTestCase
         return $mockedSecurity;
     }
 
+
     /**
-     * @todo on peut aller chercher le status (code retour http directement dans le contenu du fichier)
+     * @param int|null $httpCode si laissé à null : lecture du status dans le json, sinon Response::HTTP_OK
+     * @throws JsonException
      */
     protected function prepareHttpResponse(
         string $jsonFilePath,
-        int    $httpCode = Response::HTTP_OK,
+        ?int   $httpCode = null,
         array $headers = []
     ): void
     {
-        $httpClient = new MockHttpClient();
         $filePath = __DIR__ . '/Service/stubs/' . $jsonFilePath;
         $body = file_get_contents($filePath);
         if(!(is_string($body))) {
             throw new Exception('Echec ouverture du fichier de stub ' . $filePath);
         }
+
+        // récupération du status dans le payload (pour erreurs)
+        if(is_null($httpCode)) {
+            try {
+                $httpCode = json_decode($body, flags: JSON_THROW_ON_ERROR)->status ?? null;
+            }
+            catch (JsonException) {
+                throw new Exception('Echec lecture du status dans le json '.$filePath.'. As tu oublié de passer explicitement le code de retour attendu ?');
+            }
+        }
+
+        // si on a toujours pas status, ni du paramètre, ni du json, c'est 200
+        $httpCode ??= Response::HTTP_OK;
 
         $mockResponse = new MockResponse(
             $body,
@@ -56,6 +71,7 @@ class KernelTestCase extends SymfonyKernelTestCase
                 'response_headers' => $headers
             ]
         );
+        $httpClient = new MockHttpClient();
         $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
 
         KernelTestCase::getContainer()->set(HttpClientInterface::class, $httpClient);

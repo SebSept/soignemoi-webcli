@@ -13,7 +13,7 @@ use App\Tests\KernelTestCase;
 use DateTime;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpClient\MockHttpClient;
-use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -34,7 +34,7 @@ class PostPatientHospitalStaysTest extends KernelTestCase
         // les tests sont réalisés au moment de la création des requetes,
         // dans les callbacks définis ici
         $testExpectedApiCalls = [
-            function ($method, $url, array $options): MockResponse {
+            function ($method, $url, array $options): JsonMockResponse {
                 $body = $options['body'];
                 // Assert
                 // tests basiques
@@ -48,8 +48,8 @@ class PostPatientHospitalStaysTest extends KernelTestCase
                 $this->assertStringContainsString('"medicalSpeciality":"la specialite"', $body);
                 $this->assertStringContainsString('"reason":"une raison valable"', $body);
 
-                return new MockResponse(
-                    'sans aucune importance, non testé',
+                return new JsonMockResponse(
+                    ['rien' => 'sans aucune importance, non testé'],
                     ['http_code' => Response::HTTP_OK]
                 );
             }

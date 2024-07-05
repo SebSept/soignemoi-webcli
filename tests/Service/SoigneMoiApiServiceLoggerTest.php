@@ -6,13 +6,13 @@ use DateTime;
 use App\Entity\Doctor;
 use App\Security\User;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Entity\HospitalStay;
 use App\Service\SoigneMoiApiService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
-use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class SoigneMoiApiServiceLoggerTest extends KernelTestCase
@@ -24,12 +24,12 @@ class SoigneMoiApiServiceLoggerTest extends KernelTestCase
         self::bootKernel();
 
         // Mock Http response
-        $mockResponse = new MockResponse(
-            json_encode(['lacharge' => 'recue', 'title' => 'le titre d erreur', 'detail' => 'c interdit']),
+        $mockResponse = new JsonMockResponse(
+            ['lacharge' => 'recue', 'title' => 'le titre d erreur', 'detail' => 'c interdit'],
             ['http_code' => Response::HTTP_FORBIDDEN]
         );
         $httpClient = new MockHttpClient();
-        $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
+        $httpClient->setResponseFactory(static fn(): JsonMockResponse => $mockResponse);
         static::getContainer()->set(HttpClientInterface::class, $httpClient);
 
         $security = $this->createMock(Security::class);
@@ -61,12 +61,12 @@ class SoigneMoiApiServiceLoggerTest extends KernelTestCase
         // Arrange
         self::bootKernel();
 
-        $mockResponse = new MockResponse(
-            json_encode(['role' => 'ROLE_DOCTOR', 'accessToken' => '123', 'id' => 1]),
+        $mockResponse = new JsonMockResponse(
+            ['role' => 'ROLE_DOCTOR', 'accessToken' => '123', 'id' => 1],
             ['http_code' => 200]
         );
         $httpClient = new MockHttpClient();
-        $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
+        $httpClient->setResponseFactory(static fn(): JsonMockResponse => $mockResponse);
         static::getContainer()->set(HttpClientInterface::class, $httpClient);
 
         // Act

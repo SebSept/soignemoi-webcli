@@ -27,7 +27,7 @@ class CommonTest extends KernelTestCase
     public function testGetRequestThrowsUnexpectedApiFailureNoJsonResponse(): void
     {
         // Arrange
-        $this->prepareHttpResponse('response_not_json.json');
+        $this->prepareHttpResponse('response_not_json.json', Response::HTTP_OK);
         static::getContainer()->set(Security::class, $this->getMockedSecurity());
 
         /** @var SoigneMoiApiService $api */
@@ -65,7 +65,7 @@ class CommonTest extends KernelTestCase
     public function testGetRequestThrowsInvalidContentFailureCode400Response(): void
     {
         // Arrange
-        $this->prepareHttpResponse('response_apip_error_400.json', httpCode: Response::HTTP_BAD_REQUEST);
+        $this->prepareHttpResponse('response_apip_error_400.json');
         static::getContainer()->set(Security::class, $this->getMockedSecurity());
 
         /** @var SoigneMoiApiService $api */
@@ -89,7 +89,7 @@ class CommonTest extends KernelTestCase
     public function testGetRequestThrowsNotFoundFailureCode404Response(): void
     {
         // Arrange
-        $this->prepareHttpResponse('response_apip_error_404.json', httpCode: Response::HTTP_NOT_FOUND);
+        $this->prepareHttpResponse('response_apip_error_404.json');
         static::getContainer()->set(Security::class, $this->getMockedSecurity());
 
         /** @var SoigneMoiApiService $api */
@@ -141,7 +141,7 @@ class CommonTest extends KernelTestCase
     public function testGetRequestThrowsAuthorizationFailureCode403Response(): void
     {
         // Arrange
-        $this->prepareHttpResponse('response_apip_error_403.json', httpCode: Response::HTTP_FORBIDDEN);
+        $this->prepareHttpResponse('response_apip_error_403.json');
         static::getContainer()->set(Security::class, $this->getMockedSecurity());
 
         /** @var SoigneMoiApiService $api */
@@ -165,7 +165,7 @@ class CommonTest extends KernelTestCase
     public function testGetRequestThrowsInvalidContentFailureCode422Response(): void
     {
         // Arrange
-        $this->prepareHttpResponse('response_apip_error_422.json', httpCode: Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->prepareHttpResponse('response_apip_error_422.json');
         static::getContainer()->set(Security::class, $this->getMockedSecurity());
 
         /** @var SoigneMoiApiService $api */
@@ -197,7 +197,7 @@ class CommonTest extends KernelTestCase
     public function testGetRequestThrowsUnexpectedApiFailure500Response(): void
     {
         // Arrange
-        $this->prepareHttpResponse('response_apip_error_500.json', httpCode: Response::HTTP_INTERNAL_SERVER_ERROR);
+        $this->prepareHttpResponse('response_apip_error_500.json');
         static::getContainer()->set(Security::class, $this->getMockedSecurity());
 
         /** @var SoigneMoiApiService $api */
