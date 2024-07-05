@@ -106,8 +106,7 @@ init:
     @echo press any key to review settings in .env
     @read
     xdg-open .env
-    just up
-    {{composer}} install
+    just update
     just db-create-test
     just db-create
     just browser
