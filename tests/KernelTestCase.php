@@ -18,9 +18,10 @@ class KernelTestCase extends SymfonyKernelTestCase
 {
 
     /**
-     * @return (object&MockObject)|MockObject|Security|(Security&object&MockObject)|(Security&MockObject)
+     * @xreturn (object&MockObject)|MockObject|Security|(Security&object&MockObject)|(Security&MockObject)
+     * @return MockObject<Security>
      */
-    protected function getMockedSecurity()
+    protected function getMockedSecurity(): MockObject
     {
         $user = new User('nop@nop.com');
         $user->setToken('123');
@@ -32,6 +33,9 @@ class KernelTestCase extends SymfonyKernelTestCase
         return $mockedSecurity;
     }
 
+    /**
+     * @todo on peut aller chercher le status (code retour http directement dans le contenu du fichier)
+     */
     protected function prepareHttpResponse(
         string $jsonFilePath,
         int    $httpCode = Response::HTTP_OK

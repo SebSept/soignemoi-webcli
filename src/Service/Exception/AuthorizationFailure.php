@@ -13,6 +13,9 @@ namespace App\Service\Exception;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * Utilisateur authentifié mais n'a pas les droits nécessaires.
+ */
 class AuthorizationFailure extends AccessDeniedException
 {
 }
