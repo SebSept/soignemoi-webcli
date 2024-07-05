@@ -2,8 +2,10 @@
 
 namespace App\Tests\Service;
 
+use Generator;
 use App\Tests\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Service\SoigneMoiApiService;
@@ -258,7 +260,25 @@ class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
         // Assert
         $this->assertTrue($response->ok);
         $this->assertSame('ROLE_ADMIN', $response->role);
+    }
 
+    public function testTransportExceptionIsThrowOnNetworkFailure(): void
+    {
+        // Arrange
+        $httpClient = new MockHttpClient(
+            new MockResponse((static function (): Generator {
+                yield new TransportException('Error at transport level');
+            })())
+        );
+        static::getContainer()->set(HttpClientInterface::class, $httpClient);
+
+        // Assert
+        $this->expectException(TransportException::class);
+
+        // Act
+        /** @var SoigneMoiApiService $api */
+        $api = static::getContainer()->get(SoigneMoiApiService::class);
+        $api->authenticateUser('nomatter@nomatter.com', 'nomatter');
     }
 
 }

@@ -30,6 +30,7 @@ use Psr\Log\LoggerInterface;
 use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -128,7 +129,7 @@ class SoigneMoiApiService
 
             if (200 !== $response->getStatusCode()) {
                 $this->apiErrorsLogger->critical(
-                    'Essait d\'authentification ratée.', [
+                    'Essai d\'authentification ratée.', [
                         'responseCode' => $response->getStatusCode(),
                         'responseContent' => $response->getContent(),
                     ]);
@@ -157,6 +158,13 @@ class SoigneMoiApiService
             if (!in_array($role, self::ALLOWED_ROLES)) {
                 throw new AuthorizationFailure('Unexpected role "'.$role.'"');
             }
+        } catch (TransportException $transportException) {
+            $this->apiErrorsLogger->critical(
+                'Connexion api ratée - TransportException', [
+                    'message' => $transportException->getMessage(),
+                ]);
+            // exception relancée pour affichée le message d'erreur interne.
+            throw $transportException;
         } catch (Exception) {
             return new ApiResponse(false);
         }
