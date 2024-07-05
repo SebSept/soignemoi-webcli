@@ -377,10 +377,7 @@ class SoigneMoiApiService
             'GET',
             $this->apiUrl.sprintf($url, $id),
             [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer '.$this->getToken(),
-                ],
+                'auth_bearer' => $this->getToken(),
             ]);
 
         $this->abortOnNonOkResponse($response, 'GET', $this->apiUrl.sprintf($url, $id));
@@ -400,9 +397,8 @@ class SoigneMoiApiService
         $response = $this->httpClient->request('PATCH', $this->apiUrl.sprintf($url, $id), [
             'headers' => [
                 'Content-Type' => 'application/merge-patch+json',
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer '.$this->getToken(),
             ],
+            'auth_bearer' => $this->getToken(),
             'json' => $data,
         ]);
 
@@ -415,11 +411,7 @@ class SoigneMoiApiService
     private function postRequest(string $url, array $data): void
     {
         $response = $this->httpClient->request('POST', $this->apiUrl.$url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer '.$this->getToken(),
-            ],
+            'auth_bearer' => $this->getToken(),
             'json' => $data,
         ]);
 
