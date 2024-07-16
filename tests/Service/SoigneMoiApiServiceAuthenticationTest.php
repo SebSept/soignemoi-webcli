@@ -2,30 +2,59 @@
 
 namespace App\Tests\Service;
 
-use App\Security\User;
+use Generator;
+use App\Tests\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpClient\Exception\TransportException;
+use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use App\Entity\HospitalStay;
 use App\Service\SoigneMoiApiService;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
 {
-    
+    public function testAuthTokenIsSent(): void
+    {
+        // les tests sont réalisés au moment de la création des requetes,
+        // dans les callbacks définis ici
+        $testExpectedApiCalls = [
+            function ($method, $url, array $options): JsonMockResponse {
+                $headers = $options['normalized_headers'];
+                // Assert
+                $this->assertSame('GET', $method);
+                $this->assertContains('Authorization: Bearer 123', $headers['authorization'], 'debogage : contenus : '.var_export($headers, true));
+
+                return new JsonMockResponse(
+                    ['rien' => 'sans aucune importance, non testé'],
+                    ['http_code' => Response::HTTP_OK] // important sinon, exception est levée
+                );
+            }
+        ];
+
+        $httpClient = new MockHttpClient($testExpectedApiCalls);
+
+        static::getContainer()->set(HttpClientInterface::class, $httpClient);
+        static::getContainer()->set(Security::class, $this->getMockedSecurity());
+
+        // Act
+        /** @var SoigneMoiApiService $api */
+        $api = static::getContainer()->get(SoigneMoiApiService::class);
+        $api->getDoctors();
+    }
+
     public function testAuthenticationFailsIfUnAuthorized(): void
     {
         // Arrange
         self::bootKernel();
 
-        $mockResponse = new MockResponse(
-            json_encode(['role' => 'ROLE_ADMIN', 'accessToken' => '123', 'id' => 1]), // données pour être sur que c'est le code http qui détermine le succès
+        $mockResponse = new JsonMockResponse(
+            ['role' => 'ROLE_ADMIN', 'accessToken' => '123', 'id' => 1], // données pour être sur que c'est le code http qui détermine le succès
             ['http_code' => Response::HTTP_UNAUTHORIZED]
         );
         $httpClient = new MockHttpClient();
-        $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
+        $httpClient->setResponseFactory(static fn(): JsonMockResponse => $mockResponse);
         static::getContainer()->set(HttpClientInterface::class, $httpClient);
 
         // Act
@@ -59,8 +88,8 @@ class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
     {
         // Arrange
         $httpClient = new MockHttpClient();
-        $mockResponse = new MockResponse('{"bla": "bla"}', ['http_code' => Response::HTTP_OK]);
-        $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
+        $mockResponse = new JsonMockResponse(['bla' => 'bla'], ['http_code' => Response::HTTP_OK]);
+        $httpClient->setResponseFactory(static fn(): JsonMockResponse => $mockResponse);
         static::getContainer()->set(HttpClientInterface::class, $httpClient);
 
         /** @var SoigneMoiApiService $api */
@@ -77,8 +106,8 @@ class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
     {
         // Arrange
         $httpClient = new MockHttpClient();
-        $mockResponse = new MockResponse('{"accessToken": "123"}', ['http_code' => Response::HTTP_OK]);
-        $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
+        $mockResponse = new JsonMockResponse(['accessToken' => "123"], ['http_code' => Response::HTTP_OK]);
+        $httpClient->setResponseFactory(static fn(): JsonMockResponse => $mockResponse);
         static::getContainer()->set(HttpClientInterface::class, $httpClient);
 
         /** @var SoigneMoiApiService $api */
@@ -95,8 +124,8 @@ class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
     {
         // Arrange
         $httpClient = new MockHttpClient();
-        $mockResponse = new MockResponse('{"accessToken": "123", "role": "ROLE_NOT_A_ROLE"}', ['http_code' => Response::HTTP_OK]);
-        $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
+        $mockResponse = new JsonMockResponse(['accessToken' => "123", "role" => "ROLE_NOT_A_ROLE"], ['http_code' => Response::HTTP_OK]);
+        $httpClient->setResponseFactory(static fn(): JsonMockResponse => $mockResponse);
         static::getContainer()->set(HttpClientInterface::class, $httpClient);
 
         /** @var SoigneMoiApiService $api */
@@ -113,15 +142,15 @@ class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
         $httpClient = new MockHttpClient();
         $token = 'valid-token';
         $id = 44;
-        $mockResponse = new MockResponse(
-            json_encode([
+        $mockResponse = new JsonMockResponse(
+            [
                 'accessToken' => $token,
                 'role' => 'ROLE_PATIENT',
                 'id' => $id
-            ]),
+            ],
             ['http_code' => Response::HTTP_OK]
         );
-        $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
+        $httpClient->setResponseFactory(static fn(): JsonMockResponse => $mockResponse);
         static::getContainer()->set(HttpClientInterface::class, $httpClient);
 
         /** @var SoigneMoiApiService $api */
@@ -138,45 +167,18 @@ class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
         $this->assertSame($id, $response->id);
     }
 
-    public function testGetPatientHospitalStays(): void
-    {
-        $httpClient = new MockHttpClient();
-        $mockResponse = new MockResponse(
-            file_get_contents(__DIR__.'/response_hospital_stays.json'),
-            ['http_code' => Response::HTTP_OK]
-        );
-        $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
-
-        $user = new User('nop@nop.com');
-        $user->setToken('123');
-        $user->setId(7);
-
-        $mockedSecurity = $this->createMock(Security::class);
-        $mockedSecurity->method('getUser')->willReturn($user);
-
-        static::getContainer()->set(HttpClientInterface::class, $httpClient);
-        static::getContainer()->set(Security::class, $mockedSecurity);
-
-        /** @var SoigneMoiApiService $api */
-        $api = static::getContainer()->get(SoigneMoiApiService::class);
-
-        $hospitalStays = $api->getPatientHospitalStays();
-
-        $this->assertContainsOnlyInstancesOf(HospitalStay::class, $hospitalStays);
-    }
-
     public function testPatientCanLogin(): void
     {
         // Arrange
         self::bootKernel();
 
         $token = '123';
-        $mockResponse = new MockResponse(
-            json_encode(['role' => 'ROLE_PATIENT', 'accessToken' => $token, 'id' => 1]),
+        $mockResponse = new JsonMockResponse(
+            ['role' => 'ROLE_PATIENT', 'accessToken' => $token, 'id' => 1],
             ['http_code' => 200]
         );
         $httpClient = new MockHttpClient();
-        $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
+        $httpClient->setResponseFactory(static fn(): JsonMockResponse => $mockResponse);
         static::getContainer()->set(HttpClientInterface::class, $httpClient);
 
         // Act
@@ -196,12 +198,12 @@ class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
         // Arrange
         self::bootKernel();
 
-        $mockResponse = new MockResponse(
-            json_encode(['role' => 'ROLE_DOCTOR', 'accessToken' => '123', 'id' => 1]),
+        $mockResponse = new JsonMockResponse(
+            ['role' => 'ROLE_DOCTOR', 'accessToken' => '123', 'id' => 1],
             ['http_code' => 200]
         );
         $httpClient = new MockHttpClient();
-        $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
+        $httpClient->setResponseFactory(static fn(): JsonMockResponse => $mockResponse);
         static::getContainer()->set(HttpClientInterface::class, $httpClient);
 
         // Act
@@ -219,12 +221,12 @@ class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
         // Arrange
         self::bootKernel();
 
-        $mockResponse = new MockResponse(
-            json_encode(['role' => 'ROLE_SECRETARY', 'accessToken' => '123', 'id' => 1]),
+        $mockResponse = new JsonMockResponse(
+            ['role' => 'ROLE_SECRETARY', 'accessToken' => '123', 'id' => 1],
             ['http_code' => 200]
         );
         $httpClient = new MockHttpClient();
-        $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
+        $httpClient->setResponseFactory(static fn(): JsonMockResponse => $mockResponse);
         static::getContainer()->set(HttpClientInterface::class, $httpClient);
 
         // Act
@@ -242,12 +244,12 @@ class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
         // Arrange
         self::bootKernel();
 
-        $mockResponse = new MockResponse(
-            json_encode(['role' => 'ROLE_ADMIN', 'accessToken' => '123', 'id' => 1]),
+        $mockResponse = new JsonMockResponse(
+            ['role' => 'ROLE_ADMIN', 'accessToken' => '123', 'id' => 1],
             ['http_code' => 200]
         );
         $httpClient = new MockHttpClient();
-        $httpClient->setResponseFactory(static fn(): MockResponse => $mockResponse);
+        $httpClient->setResponseFactory(static fn(): JsonMockResponse => $mockResponse);
         static::getContainer()->set(HttpClientInterface::class, $httpClient);
 
         // Act
@@ -258,7 +260,25 @@ class SoigneMoiApiServiceAuthenticationTest extends KernelTestCase
         // Assert
         $this->assertTrue($response->ok);
         $this->assertSame('ROLE_ADMIN', $response->role);
+    }
 
+    public function testTransportExceptionIsThrowOnNetworkFailure(): void
+    {
+        // Arrange
+        $httpClient = new MockHttpClient(
+            new MockResponse((static function (): Generator {
+                yield new TransportException('Error at transport level');
+            })())
+        );
+        static::getContainer()->set(HttpClientInterface::class, $httpClient);
+
+        // Assert
+        $this->expectException(TransportException::class);
+
+        // Act
+        /** @var SoigneMoiApiService $api */
+        $api = static::getContainer()->get(SoigneMoiApiService::class);
+        $api->authenticateUser('nomatter@nomatter.com', 'nomatter');
     }
 
 }

@@ -17,7 +17,7 @@ use App\Entity\Patient;
 use App\Entity\Prescription;
 use App\Form\Type\MedicalOpinionType;
 use App\Form\Type\PrescriptionType;
-use App\Service\ApiValidationException;
+use App\Service\Exception\InvalidContentFailure;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -110,8 +110,8 @@ class DoctorPatientsTodayController extends AbstractController
     )]
     public function prescriptionFormSubmit(Request $request): Response
     {
+        $form = $this->createForm(PrescriptionType::class);
         try {
-            $form = $this->createForm(PrescriptionType::class);
             $form->handleRequest($request);
             /** @var Prescription $prescription */
             $prescription = $form->getData();
@@ -122,17 +122,23 @@ class DoctorPatientsTodayController extends AbstractController
                 'success',
                 'Modifications enregistrées.'
             );
-        } catch (ApiValidationException $validationException) {
+
+            return $this->redirectToRoute('app_doctor_patients_today');
+        } catch (InvalidContentFailure $validationException) {
             $this->addFlash(
                 'danger',
                 $validationException->getMessage()
             );
+
+            return $this->render('doctor/patients/prescription.html.twig', [
+                'form' => $form->createView(),
+            ]);
         } catch (Exception) {
             $this->addFlash(
                 'danger',
                 'Erreur interne.'
             );
-        } finally {
+
             return $this->redirectToRoute('app_doctor_patients_today');
         }
     }

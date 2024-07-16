@@ -1,0 +1,18 @@
+{
+  "status": 422,
+  "violations": [
+    {
+      "propertyPath": "reason",
+      "message": "This value should not be blank.",
+      "code": "c1051bb4-d103-4f74-8988-acbcafc7fdc3"
+    },
+    {
+      "propertyPath": "medicalSpeciality",
+      "message": "This value should not be blank.",
+      "code": "c1051bb4-d103-4f74-8988-acbcafc7fdc3"
+    }
+  ],
+  "detail": "reason: This value should not be blank.\nmedicalSpeciality: This value should not be blank.",
+  "type": "\/validation_errors\/0=c1051bb4-d103-4f74-8988-acbcafc7fdc3;1=c1051bb4-d103-4f74-8988-acbcafc7fdc3",
+  "title": "An error occurred"
+}

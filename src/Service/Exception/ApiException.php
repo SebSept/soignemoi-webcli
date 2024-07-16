@@ -9,8 +9,10 @@ declare(strict_types=1);
  * 2024
  */
 
-namespace App\Service;
+namespace App\Service\Exception;
 
-class InvalidRoleException extends ApiException
+use RuntimeException;
+
+abstract class ApiException extends RuntimeException
 {
 }

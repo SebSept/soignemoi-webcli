@@ -1,0 +1,6 @@
+{
+  "title": "An error occurred",
+  "detail": "Not Found",
+  "status": 404,
+  "type": "\/errors\/404"
+}

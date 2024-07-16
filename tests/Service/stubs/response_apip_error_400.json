@@ -1,0 +1,6 @@
+{
+  "title": "An error occurred",
+  "detail": "Page should not be less than 1",
+  "status": 400,
+  "type": "\/errors\/400"
+}

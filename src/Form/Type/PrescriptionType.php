@@ -38,7 +38,6 @@ class PrescriptionType extends AbstractType
                 CollectionType::class,
                 [
                     'entry_type' => PrescriptionItemType::class,
-                    //                    'data_class' => PrescriptionItem::class,
                     'entry_options' => ['label' => 'Prescription'],
                     'prototype' => true, // pas utile, val par défaut
                     'allow_add' => true,
@@ -59,7 +58,8 @@ class PrescriptionType extends AbstractType
             'empty_data' => new Prescription(
                 null,
                 new Doctor(),
-                new Patient(), [
+                new Patient(),
+                [
                     new PrescriptionItem(null, '', ''),
                 ]),
         ]);

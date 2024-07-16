@@ -6,6 +6,10 @@ framework:
     # Note that the session will be started ONLY if you read or write from it.
     session: true
 
+    http_client:
+        default_options:
+            headers:
+                Accept: 'application/json'
     #esi: true
     #fragments: true
 #    assets:

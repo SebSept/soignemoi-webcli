@@ -33,11 +33,12 @@ class HospitalStayType extends AbstractType
             'property_path' => 'patient.id',
             'data' => $options['patientId'],
         ]);
-        $builder->add('startDate', DateType::class);
-        $builder->add('endDate', DateType::class);
+        $builder->add('startDate', DateType::class, ['label' => 'Date d\'arrivée']);
+        $builder->add('endDate', DateType::class, ['label' => 'Date de départ']);
         $builder->add('reason', TextType::class, ['label' => 'Motif']);
         $builder->add('medicalSpeciality', TextType::class, ['label' => 'Spécialité']);
         $builder->add('doctor', ChoiceType::class, [
+            'label' => 'Médecin',
             'choices' => $options['doctors'],
             'choice_label' => 'fullName',
             'choice_value' => 'id',

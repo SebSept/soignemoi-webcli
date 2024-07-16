@@ -87,6 +87,10 @@ sql query env='dev':
 psysh:
     {{docker_php_exec}} psysh
 
+fix-rights:
+    sudo chown seb:www-data ./ -R
+    sudo chmod g+w ./ -R
+
 pre-commit:
     {{composer}} run-script pre-commit
 
@@ -102,8 +106,7 @@ init:
     @echo press any key to review settings in .env
     @read
     xdg-open .env
-    just up
-    {{composer}} install
+    just update
     just db-create-test
     just db-create
     just browser

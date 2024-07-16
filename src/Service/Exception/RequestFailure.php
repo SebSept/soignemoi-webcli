@@ -9,10 +9,8 @@ declare(strict_types=1);
  * 2024
  */
 
-namespace App\Service;
+namespace App\Service\Exception;
 
-use RuntimeException;
-
-class ApiException extends RuntimeException
+class RequestFailure extends ApiException
 {
 }
